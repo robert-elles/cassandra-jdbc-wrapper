@@ -14,13 +14,9 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
 import java.sql.Types;
 
 import com.datastax.driver.core.TupleValue;
-import com.datastax.driver.core.UDTValue;
 
 public class JdbcTuple extends AbstractJdbcType<TupleValue> {
     public static final JdbcTuple instance = new JdbcTuple();

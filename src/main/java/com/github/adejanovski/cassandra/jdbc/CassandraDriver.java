@@ -19,17 +19,25 @@ import static com.github.adejanovski.cassandra.jdbc.Utils.PROTOCOL;
 import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_PASSWORD;
 import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_USER;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.DriverPropertyInfo;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLNonTransientConnectionException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-import com.google.common.cache.*;
-import com.google.common.collect.ImmutableMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * The Class CassandraDriver.

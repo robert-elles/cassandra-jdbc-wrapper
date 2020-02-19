@@ -17,7 +17,6 @@ package com.github.adejanovski.cassandra.jdbc;
 import java.io.InputStream;
 import java.io.Reader;
 import java.sql.Array;
-import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.NClob;
 import java.sql.Ref;

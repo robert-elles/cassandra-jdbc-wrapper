@@ -1,6 +1,5 @@
 package com.github.adejanovski.cassandra.jdbc;
 
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

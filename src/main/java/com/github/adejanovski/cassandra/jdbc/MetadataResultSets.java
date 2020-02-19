@@ -14,18 +14,18 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import com.datastax.driver.core.ColumnMetadata;
-import com.datastax.driver.core.IndexMetadata;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.TableMetadata;
-import com.google.common.collect.Lists;
-
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import com.datastax.driver.core.ColumnMetadata;
+import com.datastax.driver.core.IndexMetadata;
+import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.TableMetadata;
+import com.google.common.collect.Lists;
 
 public class MetadataResultSets {
     static final String TABLE_CONSTANT = "TABLE";

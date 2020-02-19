@@ -14,7 +14,17 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import static com.github.adejanovski.cassandra.jdbc.Utils.*;
+import static com.github.adejanovski.cassandra.jdbc.Utils.BAD_AUTO_GEN;
+import static com.github.adejanovski.cassandra.jdbc.Utils.BAD_FETCH_DIR;
+import static com.github.adejanovski.cassandra.jdbc.Utils.BAD_FETCH_SIZE;
+import static com.github.adejanovski.cassandra.jdbc.Utils.BAD_HOLD_RSET;
+import static com.github.adejanovski.cassandra.jdbc.Utils.BAD_KEEP_RSET;
+import static com.github.adejanovski.cassandra.jdbc.Utils.BAD_TYPE_RSET;
+import static com.github.adejanovski.cassandra.jdbc.Utils.NO_GEN_KEYS;
+import static com.github.adejanovski.cassandra.jdbc.Utils.NO_INTERFACE;
+import static com.github.adejanovski.cassandra.jdbc.Utils.NO_MULTIPLE;
+import static com.github.adejanovski.cassandra.jdbc.Utils.NO_RESULTSET;
+import static com.github.adejanovski.cassandra.jdbc.Utils.WAS_CLOSED_STMT;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +37,6 @@ import java.sql.SQLSyntaxErrorException;
 import java.sql.SQLTransientException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
-
 import java.util.ArrayList;
 import java.util.List;
 

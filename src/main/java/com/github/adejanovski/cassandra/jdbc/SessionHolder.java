@@ -14,6 +14,16 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_DATABASE_NAME;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_DEBUG;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_LOADBALANCING_POLICY;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_PASSWORD;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_PORT_NUMBER;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_RECONNECT_POLICY;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_RETRY_POLICY;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_SERVER_NAME;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_USER;
+
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
@@ -22,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.google.common.cache.LoadingCache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +50,7 @@ import com.github.adejanovski.cassandra.jdbc.codec.DoubleToFloatCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.IntToLongCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.LongToIntCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.TimestampToLongCodec;
-
-import static com.github.adejanovski.cassandra.jdbc.Utils.*;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Holds a {@link Session} shared among multiple {@link CassandraConnection} objects.

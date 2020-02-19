@@ -14,8 +14,39 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import java.sql.*;
-import java.util.*;
+import static com.github.adejanovski.cassandra.jdbc.CassandraResultSet.DEFAULT_CONCURRENCY;
+import static com.github.adejanovski.cassandra.jdbc.CassandraResultSet.DEFAULT_HOLDABILITY;
+import static com.github.adejanovski.cassandra.jdbc.CassandraResultSet.DEFAULT_TYPE;
+import static com.github.adejanovski.cassandra.jdbc.Utils.ALWAYS_AUTOCOMMIT;
+import static com.github.adejanovski.cassandra.jdbc.Utils.BAD_TIMEOUT;
+import static com.github.adejanovski.cassandra.jdbc.Utils.NO_INTERFACE;
+import static com.github.adejanovski.cassandra.jdbc.Utils.NO_TRANSACTIONS;
+import static com.github.adejanovski.cassandra.jdbc.Utils.PROTOCOL;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_ACTIVE_CQL_VERSION;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_CONSISTENCY_LEVEL;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_CQL_VERSION;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_DATABASE_NAME;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_DEBUG;
+import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_USER;
+import static com.github.adejanovski.cassandra.jdbc.Utils.WAS_CLOSED_CON;
+import static com.github.adejanovski.cassandra.jdbc.Utils.createSubName;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLNonTransientConnectionException;
+import java.sql.SQLTimeoutException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -28,12 +59,8 @@ import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ProtocolOptions.Compression;
 import com.datastax.driver.core.Session;
-
 import com.datastax.driver.core.UserType;
 import com.google.common.collect.Maps;
-
-import static com.github.adejanovski.cassandra.jdbc.CassandraResultSet.*;
-import static com.github.adejanovski.cassandra.jdbc.Utils.*;
 
 /**
  * Implementation class for {@link Connection}.

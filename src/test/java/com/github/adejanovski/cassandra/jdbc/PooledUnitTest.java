@@ -14,12 +14,6 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,9 +22,9 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
-//import com.datastax.driver.core.CCMBridge;
-import com.github.adejanovski.cassandra.jdbc.CassandraDataSource;
-import com.github.adejanovski.cassandra.jdbc.PooledCassandraDataSource;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class PooledUnitTest {
     private static String HOST = System.getProperty("host", ConnectionDetails.getHost());

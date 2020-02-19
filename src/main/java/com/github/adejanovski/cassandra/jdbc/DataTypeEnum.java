@@ -11,9 +11,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.datastax.driver.core.DataType;
+import com.datastax.driver.core.DataType.Name;
 import com.datastax.driver.core.TupleValue;
 import com.datastax.driver.core.UDTValue;
-import com.datastax.driver.core.DataType.Name;
 import com.datastax.driver.core.exceptions.DriverInternalError;
 import com.google.common.collect.Maps;
 

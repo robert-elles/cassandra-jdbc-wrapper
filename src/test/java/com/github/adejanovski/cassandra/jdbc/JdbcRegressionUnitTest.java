@@ -14,24 +14,8 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.ExpectedExceptions;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
-import org.testng.AssertJUnit;
-import org.testng.Assert;
-
-import static org.mockito.Mockito.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.sql.Blob;
@@ -41,14 +25,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.SQLNonTransientException;
 import java.sql.SQLTransientException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -57,20 +38,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-//import com.datastax.driver.core.CCMBridge;
-//import com.datastax.driver.core.CCMBridge.CCMCluster;
-import com.datastax.driver.core.Cluster;
+import org.testng.Assert;
+import org.testng.AssertJUnit;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.Host;
-import com.datastax.driver.core.ProtocolVersion;
-import com.datastax.driver.core.TupleType;
 import com.datastax.driver.core.TupleValue;
 import com.datastax.driver.core.UDTValue;
-import com.github.adejanovski.cassandra.jdbc.CassandraStatement;
-import com.github.adejanovski.cassandra.jdbc.CassandraStatementExtras;
-
-import static com.datastax.driver.core.TestUtils.*;
 
 public class JdbcRegressionUnitTest {
     private static String HOST = System.getProperty("host", ConnectionDetails.getHost());

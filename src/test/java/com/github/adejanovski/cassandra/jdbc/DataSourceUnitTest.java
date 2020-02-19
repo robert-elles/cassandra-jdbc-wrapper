@@ -14,16 +14,10 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
-
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
 
 import java.sql.DriverManager;
 import java.sql.SQLFeatureNotSupportedException;
@@ -31,10 +25,9 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
-//import com.datastax.driver.core.CCMBridge;
-import com.github.adejanovski.cassandra.jdbc.CassandraConnection;
-import com.github.adejanovski.cassandra.jdbc.CassandraDataSource;
-import com.github.adejanovski.cassandra.jdbc.Utils;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class DataSourceUnitTest {
     private static String HOST = System.getProperty("host", ConnectionDetails.getHost());

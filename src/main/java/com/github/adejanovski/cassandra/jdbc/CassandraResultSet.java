@@ -15,28 +15,46 @@
 
 package com.github.adejanovski.cassandra.jdbc;
 
-import static com.github.adejanovski.cassandra.jdbc.Utils.*;
+import static com.github.adejanovski.cassandra.jdbc.Utils.BAD_FETCH_DIR;
+import static com.github.adejanovski.cassandra.jdbc.Utils.BAD_FETCH_SIZE;
+import static com.github.adejanovski.cassandra.jdbc.Utils.FORWARD_ONLY;
+import static com.github.adejanovski.cassandra.jdbc.Utils.MUST_BE_POSITIVE;
+import static com.github.adejanovski.cassandra.jdbc.Utils.NO_INTERFACE;
+import static com.github.adejanovski.cassandra.jdbc.Utils.VALID_LABELS;
+import static com.github.adejanovski.cassandra.jdbc.Utils.WAS_CLOSED_RSLT;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.sql.*;
+import java.sql.Blob;
 import java.sql.Date;
-import java.util.*;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.RowId;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLNonTransientException;
+import java.sql.SQLRecoverableException;
+import java.sql.SQLSyntaxErrorException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.ColumnDefinitions.Definition;
 import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.DataType.Name;
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.exceptions.InvalidTypeException;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;

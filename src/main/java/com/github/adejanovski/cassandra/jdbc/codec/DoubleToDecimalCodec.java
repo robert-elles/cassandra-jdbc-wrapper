@@ -1,6 +1,5 @@
 package com.github.adejanovski.cassandra.jdbc.codec;
 
-import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 import org.apache.cassandra.utils.ByteBufferUtil;

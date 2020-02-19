@@ -14,12 +14,18 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import com.datastax.driver.core.Metadata;
-
-import java.sql.*;
-
 import static com.github.adejanovski.cassandra.jdbc.Utils.NOT_SUPPORTED;
 import static com.github.adejanovski.cassandra.jdbc.Utils.NO_INTERFACE;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.RowIdLifetime;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLSyntaxErrorException;
+
+import com.datastax.driver.core.Metadata;
 
 class CassandraDatabaseMetaData implements DatabaseMetaData {
     private CassandraConnection connection;

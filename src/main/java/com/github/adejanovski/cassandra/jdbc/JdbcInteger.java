@@ -15,7 +15,6 @@
 package com.github.adejanovski.cassandra.jdbc;
 
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.sql.Types;
 
 public class JdbcInteger extends AbstractJdbcType<BigInteger> {

@@ -14,7 +14,11 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.exceptions.InvalidTypeException;

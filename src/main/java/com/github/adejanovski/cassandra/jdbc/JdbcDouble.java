@@ -14,7 +14,6 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import java.nio.ByteBuffer;
 import java.sql.Types;
 
 public class JdbcDouble extends AbstractJdbcType<Double> {

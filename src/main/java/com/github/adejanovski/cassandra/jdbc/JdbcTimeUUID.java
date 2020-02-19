@@ -14,7 +14,6 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import java.nio.ByteBuffer;
 import java.util.UUID;
 
 public class JdbcTimeUUID extends AbstractJdbcUUID {

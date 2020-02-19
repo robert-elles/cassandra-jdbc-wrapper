@@ -4,7 +4,7 @@
   <groupId>com.github.adejanovski</groupId>
   <artifactId>cassandra-jdbc-wrapper</artifactId>
   <name>Cassandra JDBC Wrapper</name>
-  <version>2.1.9</version>
+  <version>3.1.0</version>
   <description>JDBC wrapper for the DataStax CQL Java Driver.</description>
   <url>https://github.com/adejanovski/cassandra-jdbc-wrapper</url>
   <inceptionYear>2015</inceptionYear>
@@ -405,7 +405,7 @@
     <dependency>
       <groupId>com.datastax.cassandra</groupId>
       <artifactId>cassandra-driver-core</artifactId>
-      <version>2.1.9</version>
+      <version>3.0.0</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -441,6 +441,7 @@
   <properties>
     <sourceReleaseAssemblyDescriptor>source-release</sourceReleaseAssemblyDescriptor>
     <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
+    <datastax.java.driver.version>3.0.0</datastax.java.driver.version>
     <cassandra.host>localhost</cassandra.host>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <gpg.useagent>true</gpg.useagent>

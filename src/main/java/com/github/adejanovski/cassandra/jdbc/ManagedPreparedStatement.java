@@ -36,7 +36,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-import com.google.common.io.CharSource;
 import com.google.common.io.CharStreams;
 
 class ManagedPreparedStatement extends AbstractStatement implements PreparedStatement {

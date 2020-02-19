@@ -14,18 +14,15 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import static org.testng.Assert.assertTrue;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
 import java.sql.SQLNonTransientException;
-import java.sql.Statement;
 
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 //import com.datastax.driver.core.CCMBridge;
 

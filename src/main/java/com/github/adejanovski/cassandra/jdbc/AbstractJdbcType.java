@@ -14,8 +14,6 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import java.nio.ByteBuffer;
-
 public abstract class AbstractJdbcType<T> {
     public abstract boolean isCaseSensitive();
 

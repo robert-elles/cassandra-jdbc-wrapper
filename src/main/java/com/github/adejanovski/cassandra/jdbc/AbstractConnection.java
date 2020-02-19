@@ -25,8 +25,8 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLXML;
 import java.sql.Savepoint;
 import java.sql.Struct;
-import java.util.concurrent.Executor;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 abstract class AbstractConnection {
     protected static final String NOT_SUPPORTED = "the Cassandra implementation does not support this method";

@@ -1,6 +1,6 @@
 package com.github.adejanovski.cassandra.jdbc.policies;
 
-import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy.*;
+import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy.Builder;
 
 public class DCAwareRoundRobinPolicy {
 

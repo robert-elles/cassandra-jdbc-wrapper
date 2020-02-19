@@ -44,7 +44,6 @@ import com.datastax.driver.core.exceptions.AlreadyExistsException;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.google.common.base.Joiner;
-import com.google.common.io.Files;
 
 public class CCMBridge {
 
