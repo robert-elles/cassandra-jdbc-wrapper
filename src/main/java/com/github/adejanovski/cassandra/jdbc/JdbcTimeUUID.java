@@ -17,39 +17,25 @@ package com.github.adejanovski.cassandra.jdbc;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-
-
-public class JdbcTimeUUID extends AbstractJdbcUUID
-{
+public class JdbcTimeUUID extends AbstractJdbcUUID {
     public static final JdbcTimeUUID instance = new JdbcTimeUUID();
 
-    JdbcTimeUUID() {}
+    JdbcTimeUUID() {
+    }
 
-    /* public String getString(ByteBuffer bytes)
-    {
-        if (bytes.remaining() == 0)
-        {
-            return "";
-        }
-        if (bytes.remaining() != 16)
-        {
-            throw new MarshalException("UUIDs must be exactly 16 bytes");
-        }
-        UUID uuid = UUIDGen.getUUID(bytes);
-        if (uuid.version() != 1)
-        {
-            throw new MarshalException("TimeUUID only makes sense with version 1 UUIDs");
-        }
-        return uuid.toString();
-    }*/
+    /*
+     * public String getString(ByteBuffer bytes) { if (bytes.remaining() == 0) { return ""; } if
+     * (bytes.remaining() != 16) { throw new MarshalException("UUIDs must be exactly 16 bytes"); }
+     * UUID uuid = UUIDGen.getUUID(bytes); if (uuid.version() != 1) { throw new
+     * MarshalException("TimeUUID only makes sense with version 1 UUIDs"); } return uuid.toString();
+     * }
+     */
 
-    public UUID compose(Object obj)
-    {
+    public UUID compose(Object obj) {
         return UUID.fromString(obj.toString());
     }
 
-    public Object decompose(UUID value)
-    {
-        return (Object)(value.toString());
+    public Object decompose(UUID value) {
+        return (Object) (value.toString());
     }
 }

@@ -11,36 +11,38 @@ import com.datastax.driver.core.exceptions.InvalidTypeException;
 
 public class TimestampToLongCodec extends TypeCodec<Long> {
 
-	public TimestampToLongCodec(Class<Long> javaClass) {
-		super(DataType.timestamp(), javaClass);
-	}
+    public TimestampToLongCodec(Class<Long> javaClass) {
+        super(DataType.timestamp(), javaClass);
+    }
 
-	@Override
-	public ByteBuffer serialize(Long paramT, ProtocolVersion paramProtocolVersion) throws InvalidTypeException {
-		if (paramT == null) {
-			return null;
-		}
-		return ByteBufferUtil.bytes(paramT);
-	}
+    @Override
+    public ByteBuffer serialize(Long paramT, ProtocolVersion paramProtocolVersion)
+            throws InvalidTypeException {
+        if (paramT == null) {
+            return null;
+        }
+        return ByteBufferUtil.bytes(paramT);
+    }
 
-	@Override
-	public Long deserialize(ByteBuffer paramByteBuffer, ProtocolVersion paramProtocolVersion) throws InvalidTypeException {
-		if (paramByteBuffer == null) {
-			return null;
+    @Override
+    public Long deserialize(ByteBuffer paramByteBuffer, ProtocolVersion paramProtocolVersion)
+            throws InvalidTypeException {
+        if (paramByteBuffer == null) {
+            return null;
 
-		}
-		// always duplicate the ByteBuffer instance before consuming it!
-		return ByteBufferUtil.toLong(paramByteBuffer.duplicate());
-	}
+        }
+        // always duplicate the ByteBuffer instance before consuming it!
+        return ByteBufferUtil.toLong(paramByteBuffer.duplicate());
+    }
 
-	@Override
-	public Long parse(String paramString) throws InvalidTypeException {
-		return Long.valueOf(paramString);
-	}
+    @Override
+    public Long parse(String paramString) throws InvalidTypeException {
+        return Long.valueOf(paramString);
+    }
 
-	@Override
-	public String format(Long paramT) throws InvalidTypeException {
-		return String.valueOf(paramT);
-	}
+    @Override
+    public String format(Long paramT) throws InvalidTypeException {
+        return String.valueOf(paramT);
+    }
 
 }

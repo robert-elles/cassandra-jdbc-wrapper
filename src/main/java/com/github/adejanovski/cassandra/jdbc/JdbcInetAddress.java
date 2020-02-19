@@ -19,79 +19,61 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.sql.Types;
 
-
-public class JdbcInetAddress extends AbstractJdbcType<InetAddress>
-{
+public class JdbcInetAddress extends AbstractJdbcType<InetAddress> {
     public static final JdbcInetAddress instance = new JdbcInetAddress();
 
-    JdbcInetAddress()
-    {
+    JdbcInetAddress() {
     }
 
-    public boolean isCaseSensitive()
-    {
+    public boolean isCaseSensitive() {
         return false;
     }
 
-    public int getScale(InetAddress obj)
-    {
+    public int getScale(InetAddress obj) {
         return 0;
     }
 
-    public int getPrecision(InetAddress obj)
-    {
+    public int getPrecision(InetAddress obj) {
         return obj.toString().length();
     }
 
-    public boolean isCurrency()
-    {
+    public boolean isCurrency() {
         return false;
     }
 
-    public boolean isSigned()
-    {
+    public boolean isSigned() {
         return true;
     }
 
-    public String toString(InetAddress obj)
-    {
+    public String toString(InetAddress obj) {
         return obj.getHostAddress();
     }
 
-    public boolean needsQuotes()
-    {
+    public boolean needsQuotes() {
         return false;
     }
 
-    public String getString(ByteBuffer bytes)
-    {
+    public String getString(ByteBuffer bytes) {
         return compose(bytes).getHostAddress();
     }
 
-    public Class<InetAddress> getType()
-    {
+    public Class<InetAddress> getType() {
         return InetAddress.class;
     }
 
-    public int getJdbcType()
-    {
+    public int getJdbcType() {
         return Types.OTHER;
     }
 
-    public InetAddress compose(Object value)
-    {
-        try
-        {
-            return InetAddress.getByName((String)value);
-        }
-        catch (UnknownHostException e)
-        {
+    public InetAddress compose(Object value) {
+        try {
+            return InetAddress.getByName((String) value);
+        } catch (UnknownHostException e) {
             throw new AssertionError(e);
         }
     }
 
-    public Object decompose(InetAddress value)
-    {
-        return (Object)value.getAddress();
+    public Object decompose(InetAddress value) {
+        return (Object) value.getAddress();
     }
 }

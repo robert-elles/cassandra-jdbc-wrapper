@@ -22,83 +22,69 @@ import java.sql.Types;
 import com.datastax.driver.core.TupleValue;
 import com.datastax.driver.core.UDTValue;
 
-
-public class JdbcTuple extends AbstractJdbcType<TupleValue>
-{    
+public class JdbcTuple extends AbstractJdbcType<TupleValue> {
     public static final JdbcTuple instance = new JdbcTuple();
 
-    JdbcTuple() {}
+    JdbcTuple() {
+    }
 
-    public boolean isCaseSensitive()
-    {
+    public boolean isCaseSensitive() {
         return true;
     }
 
-    
-
-    public boolean isCurrency()
-    {
+    public boolean isCurrency() {
         return false;
     }
 
-    public boolean isSigned()
-    {
+    public boolean isSigned() {
         return false;
     }
 
-    public String toString(String obj)
-    {
+    public String toString(String obj) {
         return obj;
     }
 
-    public boolean needsQuotes()
-    {
+    public boolean needsQuotes() {
         return true;
     }
 
-    public String getString(Object obj)
-    {
-            return obj.toString();
-        
+    public String getString(Object obj) {
+        return obj.toString();
+
     }
 
-    public Class<TupleValue> getType()
-    {
+    public Class<TupleValue> getType() {
         return TupleValue.class;
     }
 
-    public int getJdbcType()
-    {
+    public int getJdbcType() {
         return Types.OTHER;
     }
 
-    public TupleValue compose(Object obj)
-    {
-        return (TupleValue)obj;
+    public TupleValue compose(Object obj) {
+        return (TupleValue) obj;
     }
 
-    public Object decompose(TupleValue value)
-    {
+    public Object decompose(TupleValue value) {
         return (Object) value;
     }
 
-	@Override
-	public int getScale(TupleValue obj) {
-		// TODO Auto-generated method stub
-		return -1;
-	}
+    @Override
+    public int getScale(TupleValue obj) {
+        // TODO Auto-generated method stub
+        return -1;
+    }
 
-	@Override
-	public int getPrecision(TupleValue obj) {
-		// TODO Auto-generated method stub
-		return -1;
-	}
+    @Override
+    public int getPrecision(TupleValue obj) {
+        // TODO Auto-generated method stub
+        return -1;
+    }
 
-	@Override
-	public String toString(TupleValue obj) {
-		// TODO Auto-generated method stub
-		return obj.toString();
-	}
+    @Override
+    public String toString(TupleValue obj) {
+        // TODO Auto-generated method stub
+        return obj.toString();
+    }
 
-	
 }

@@ -17,12 +17,10 @@ package com.github.adejanovski.cassandra.jdbc;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TypesMap
-{
+public class TypesMap {
     private final static Map<String, AbstractJdbcType<?>> map = new HashMap<String, AbstractJdbcType<?>>();
 
-    static
-    {
+    static {
         map.put("org.apache.cassandra.db.marshal.AsciiType", JdbcAscii.instance);
         map.put("org.apache.cassandra.db.marshal.BooleanType", JdbcBoolean.instance);
         map.put("org.apache.cassandra.db.marshal.BytesType", JdbcBytes.instance);
@@ -41,43 +39,42 @@ public class TypesMap
         map.put("org.apache.cassandra.db.marshal.UUIDType", JdbcUUID.instance);
 
         // Cassandra 2.x types
-        map.put("org.apache.cassandra.db.marshal.ascii",JdbcAscii.instance);
-        map.put("org.apache.cassandra.db.marshal.bigint",JdbcLong.instance);
-        map.put("org.apache.cassandra.db.marshal.blob",JdbcBytes.instance);
-        map.put("org.apache.cassandra.db.marshal.boolean",JdbcBoolean.instance);
-        map.put("org.apache.cassandra.db.marshal.counter",JdbcLong.instance);
-        map.put("org.apache.cassandra.db.marshal.decimal",JdbcDecimal.instance);
-        map.put("org.apache.cassandra.db.marshal.double",JdbcDouble.instance);
-        map.put("org.apache.cassandra.db.marshal.float",JdbcFloat.instance);
-        map.put("org.apache.cassandra.db.marshal.inet",JdbcInetAddress.instance);
-        map.put("org.apache.cassandra.db.marshal.int",JdbcInt32.instance);
-        /*list
-        map
-        set*/
-        map.put("org.apache.cassandra.db.marshal.text",JdbcUTF8.instance);
-        map.put("org.apache.cassandra.db.marshal.timestamp",JdbcDate.instance);
+        map.put("org.apache.cassandra.db.marshal.ascii", JdbcAscii.instance);
+        map.put("org.apache.cassandra.db.marshal.bigint", JdbcLong.instance);
+        map.put("org.apache.cassandra.db.marshal.blob", JdbcBytes.instance);
+        map.put("org.apache.cassandra.db.marshal.boolean", JdbcBoolean.instance);
+        map.put("org.apache.cassandra.db.marshal.counter", JdbcLong.instance);
+        map.put("org.apache.cassandra.db.marshal.decimal", JdbcDecimal.instance);
+        map.put("org.apache.cassandra.db.marshal.double", JdbcDouble.instance);
+        map.put("org.apache.cassandra.db.marshal.float", JdbcFloat.instance);
+        map.put("org.apache.cassandra.db.marshal.inet", JdbcInetAddress.instance);
+        map.put("org.apache.cassandra.db.marshal.int", JdbcInt32.instance);
+        /*
+         * list map set
+         */
+        map.put("org.apache.cassandra.db.marshal.text", JdbcUTF8.instance);
+        map.put("org.apache.cassandra.db.marshal.timestamp", JdbcDate.instance);
         map.put("org.apache.cassandra.db.marshal.uuid", JdbcUUID.instance);
-        map.put("org.apache.cassandra.db.marshal.timeuuid",JdbcTimeUUID.instance);
-        map.put("org.apache.cassandra.db.marshal.varchar",JdbcUTF8.instance);
-        map.put("org.apache.cassandra.db.marshal.varint",JdbcInteger.instance);
-        map.put("org.apache.cassandra.db.marshal.udt",JdbcUdt.instance);
-        map.put("org.apache.cassandra.db.marshal.tuple",JdbcTuple.instance);
+        map.put("org.apache.cassandra.db.marshal.timeuuid", JdbcTimeUUID.instance);
+        map.put("org.apache.cassandra.db.marshal.varchar", JdbcUTF8.instance);
+        map.put("org.apache.cassandra.db.marshal.varint", JdbcInteger.instance);
+        map.put("org.apache.cassandra.db.marshal.udt", JdbcUdt.instance);
+        map.put("org.apache.cassandra.db.marshal.tuple", JdbcTuple.instance);
     }
 
-    public static AbstractJdbcType<?> getTypeForComparator(String comparator)
-    {
+    public static AbstractJdbcType<?> getTypeForComparator(String comparator) {
         // If not fully qualified, assume it's the short name for a built-in.
         if ((comparator != null) && (!comparator.contains(".")))
-        	if(map.containsKey("org.apache.cassandra.db.marshal." + comparator)){
-        		return map.get("org.apache.cassandra.db.marshal." + comparator);
-        	}else{        		
-        		return JdbcOther.instance;
-        	}
-         
-        if(map.containsKey(comparator)){
-        	return map.get(comparator);
-        }else{        	
-        	return JdbcOther.instance;
+            if (map.containsKey("org.apache.cassandra.db.marshal." + comparator)) {
+                return map.get("org.apache.cassandra.db.marshal." + comparator);
+            } else {
+                return JdbcOther.instance;
+            }
+
+        if (map.containsKey(comparator)) {
+            return map.get(comparator);
+        } else {
+            return JdbcOther.instance;
         }
     }
 }

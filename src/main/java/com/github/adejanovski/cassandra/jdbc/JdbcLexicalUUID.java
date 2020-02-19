@@ -17,21 +17,17 @@ package com.github.adejanovski.cassandra.jdbc;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-
-public class JdbcLexicalUUID extends AbstractJdbcUUID
-{
+public class JdbcLexicalUUID extends AbstractJdbcUUID {
     public static final JdbcLexicalUUID instance = new JdbcLexicalUUID();
 
-    public JdbcLexicalUUID() {}
+    public JdbcLexicalUUID() {
+    }
 
-    
-    public UUID compose(Object obj)
-    {    	
+    public UUID compose(Object obj) {
         return UUID.fromString(obj.toString());
     }
 
-    public Object decompose(UUID value)
-    {
-        return (Object)value.toString();
+    public Object decompose(UUID value) {
+        return (Object) value.toString();
     }
 }

@@ -21,83 +21,69 @@ import java.sql.Types;
 
 import com.datastax.driver.core.UDTValue;
 
-
-public class JdbcUdt extends AbstractJdbcType<UDTValue>
-{    
+public class JdbcUdt extends AbstractJdbcType<UDTValue> {
     public static final JdbcUdt instance = new JdbcUdt();
 
-    JdbcUdt() {}
+    JdbcUdt() {
+    }
 
-    public boolean isCaseSensitive()
-    {
+    public boolean isCaseSensitive() {
         return true;
     }
 
-    
-
-    public boolean isCurrency()
-    {
+    public boolean isCurrency() {
         return false;
     }
 
-    public boolean isSigned()
-    {
+    public boolean isSigned() {
         return false;
     }
 
-    public String toString(String obj)
-    {
+    public String toString(String obj) {
         return obj;
     }
 
-    public boolean needsQuotes()
-    {
+    public boolean needsQuotes() {
         return true;
     }
 
-    public String getString(Object obj)
-    {
-            return obj.toString();
-        
+    public String getString(Object obj) {
+        return obj.toString();
+
     }
 
-    public Class<UDTValue> getType()
-    {
+    public Class<UDTValue> getType() {
         return UDTValue.class;
     }
 
-    public int getJdbcType()
-    {
+    public int getJdbcType() {
         return Types.OTHER;
     }
 
-    public UDTValue compose(Object obj)
-    {
-        return (UDTValue)obj;
+    public UDTValue compose(Object obj) {
+        return (UDTValue) obj;
     }
 
-    public Object decompose(UDTValue value)
-    {
+    public Object decompose(UDTValue value) {
         return (Object) value;
     }
 
-	@Override
-	public int getScale(UDTValue obj) {
-		// TODO Auto-generated method stub
-		return -1;
-	}
+    @Override
+    public int getScale(UDTValue obj) {
+        // TODO Auto-generated method stub
+        return -1;
+    }
 
-	@Override
-	public int getPrecision(UDTValue obj) {
-		// TODO Auto-generated method stub
-		return -1;
-	}
+    @Override
+    public int getPrecision(UDTValue obj) {
+        // TODO Auto-generated method stub
+        return -1;
+    }
 
-	@Override
-	public String toString(UDTValue obj) {
-		// TODO Auto-generated method stub
-		return obj.toString();
-	}
+    @Override
+    public String toString(UDTValue obj) {
+        // TODO Auto-generated method stub
+        return obj.toString();
+    }
 
-	
 }

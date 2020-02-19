@@ -19,71 +19,58 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.sql.Types;
 
-
-public class JdbcUTF8 extends AbstractJdbcType<String>
-{
+public class JdbcUTF8 extends AbstractJdbcType<String> {
     private static final Charset UTF_8 = Charset.forName("UTF-8");
     public static final JdbcUTF8 instance = new JdbcUTF8();
 
-    public JdbcUTF8() {}
+    public JdbcUTF8() {
+    }
 
-    public boolean isCaseSensitive()
-    {
+    public boolean isCaseSensitive() {
         return true;
     }
 
-    public int getScale(String obj)
-    {
+    public int getScale(String obj) {
         return -1;
     }
 
-    public int getPrecision(String obj)
-    {
+    public int getPrecision(String obj) {
         return -1;
     }
 
-    public boolean isCurrency()
-    {
+    public boolean isCurrency() {
         return false;
     }
 
-    public boolean isSigned()
-    {
+    public boolean isSigned() {
         return false;
     }
 
-    public String toString(String obj)
-    {
+    public String toString(String obj) {
         return obj;
     }
 
-    public boolean needsQuotes()
-    {
+    public boolean needsQuotes() {
         return true;
     }
 
-    public String getString(Object bytes)
-    {
-        return bytes.toString();       
+    public String getString(Object bytes) {
+        return bytes.toString();
     }
 
-    public Class<String> getType()
-    {
+    public Class<String> getType() {
         return String.class;
     }
 
-    public int getJdbcType()
-    {
+    public int getJdbcType() {
         return Types.VARCHAR;
     }
 
-    public String compose(Object obj)
-    {
+    public String compose(Object obj) {
         return getString(obj);
     }
 
-    public Object decompose(String value)
-    {
-        return (Object)value;
+    public Object decompose(String value) {
+        return (Object) value;
     }
 }

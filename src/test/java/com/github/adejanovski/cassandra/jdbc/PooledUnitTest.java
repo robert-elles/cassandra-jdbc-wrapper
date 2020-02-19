@@ -32,193 +32,195 @@ import javax.sql.DataSource;
 import com.github.adejanovski.cassandra.jdbc.CassandraDataSource;
 import com.github.adejanovski.cassandra.jdbc.PooledCassandraDataSource;
 
-public class PooledUnitTest
-{
-	private static String HOST = System.getProperty("host", ConnectionDetails.getHost());
-	private static final int PORT = Integer.parseInt(System.getProperty("port", ConnectionDetails.getPort() + ""));
-	private static final String KEYSPACE = "testks";
-	private static final String USER = "JohnDoe";
-	private static final String PASSWORD = "secret";
-	private static final String VERSION = "3.0.0";
+public class PooledUnitTest {
+    private static String HOST = System.getProperty("host", ConnectionDetails.getHost());
+    private static final int PORT = Integer
+            .parseInt(System.getProperty("port", ConnectionDetails.getPort() + ""));
+    private static final String KEYSPACE = "testks";
+    private static final String USER = "JohnDoe";
+    private static final String PASSWORD = "secret";
+    private static final String VERSION = "3.0.0";
     private static final String CONSISTENCY = "ONE";
-    
 
-	private static java.sql.Connection con = null;
+    private static java.sql.Connection con = null;
     private static CCMBridge ccmBridge = null;
 
-    
     private static boolean suiteLaunch = true;
-    
 
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception
-    {
-    	/*System.setProperty("cassandra.version", "2.1.2");*/    	
-    	    	
-    	if(BuildCluster.HOST.equals(System.getProperty("host", ConnectionDetails.getHost()))){
-    		BuildCluster.setUpBeforeSuite();
-    		suiteLaunch=false;
-    	}
-    	HOST = CCMBridge.ipOfNode(1);        
+    public static void setUpBeforeClass() throws Exception {
+        /* System.setProperty("cassandra.version", "2.1.2"); */
 
-		Class.forName("com.github.adejanovski.cassandra.jdbc.CassandraDriver");
-		con = DriverManager.getConnection(String.format("jdbc:cassandra://%s:%d/%s", HOST, PORT, "system"));
-		Statement stmt = con.createStatement();
+        if (BuildCluster.HOST.equals(System.getProperty("host", ConnectionDetails.getHost()))) {
+            BuildCluster.setUpBeforeSuite();
+            suiteLaunch = false;
+        }
+        HOST = CCMBridge.ipOfNode(1);
 
-		// Drop Keyspace
-		String dropKS = String.format("DROP KEYSPACE \"%s\";", KEYSPACE);
+        Class.forName("com.github.adejanovski.cassandra.jdbc.CassandraDriver");
+        con = DriverManager
+                .getConnection(String.format("jdbc:cassandra://%s:%d/%s", HOST, PORT, "system"));
+        Statement stmt = con.createStatement();
 
-		try
-		{
-			stmt.execute(dropKS);
-		}
-		catch (Exception e)
-		{/* Exception on DROP is OK */
-		}
+        // Drop Keyspace
+        String dropKS = String.format("DROP KEYSPACE \"%s\";", KEYSPACE);
 
-		// Create KeySpace
-		String createKS = String.format(
-				"CREATE KEYSPACE \"%s\" WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};",
-				KEYSPACE);
-		stmt.execute(createKS);
+        try {
+            stmt.execute(dropKS);
+        } catch (Exception e) {/* Exception on DROP is OK */
+        }
 
-		// Create KeySpace
-		String useKS = String.format("USE \"%s\";", KEYSPACE);
-		stmt.execute(useKS);
+        // Create KeySpace
+        String createKS = String.format(
+                "CREATE KEYSPACE \"%s\" WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};",
+                KEYSPACE);
+        stmt.execute(createKS);
 
-		// Create the target Column family
-		String createCF = "CREATE COLUMNFAMILY pooled_test (somekey text PRIMARY KEY," + "someInt int"
-				+ ") ;";
-		stmt.execute(createCF);
+        // Create KeySpace
+        String useKS = String.format("USE \"%s\";", KEYSPACE);
+        stmt.execute(useKS);
 
-		String insertWorld = "UPDATE pooled_test SET someInt = 1 WHERE somekey = 'world'";
-		stmt.execute(insertWorld);
-	}
+        // Create the target Column family
+        String createCF = "CREATE COLUMNFAMILY pooled_test (somekey text PRIMARY KEY,"
+                + "someInt int" + ") ;";
+        stmt.execute(createCF);
 
-   @AfterClass
-    public static void tearDownAfterClass() throws Exception
-    {
-    	
-    	if(!suiteLaunch){
-        	BuildCluster.tearDownAfterSuite();
+        String insertWorld = "UPDATE pooled_test SET someInt = 1 WHERE somekey = 'world'";
+        stmt.execute(insertWorld);
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+
+        if (!suiteLaunch) {
+            BuildCluster.tearDownAfterSuite();
         }
     }
 
-	@Test
-	public void twoMillionConnections() throws Exception
-	{
-		CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE, USER, PASSWORD, VERSION,CONSISTENCY);
+    @Test
+    public void twoMillionConnections() throws Exception {
+        CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE,
+                USER, PASSWORD, VERSION, CONSISTENCY);
 
-		DataSource pooledCassandraDataSource = new PooledCassandraDataSource(connectionPoolDataSource);
+        DataSource pooledCassandraDataSource = new PooledCassandraDataSource(
+                connectionPoolDataSource);
 
-		for (int i = 0; i < 2000000; i++)
-		{
-			Connection connection = pooledCassandraDataSource.getConnection();
-			connection.close();
-		}
-	}
+        for (int i = 0; i < 2000000; i++) {
+            Connection connection = pooledCassandraDataSource.getConnection();
+            connection.close();
+        }
+    }
 
-	@Test
-	public void twoMillionPreparedStatements() throws Exception
-	{
-		CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE, USER, PASSWORD, VERSION,CONSISTENCY);
+    @Test
+    public void twoMillionPreparedStatements() throws Exception {
+        CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE,
+                USER, PASSWORD, VERSION, CONSISTENCY);
 
-		DataSource pooledCassandraDataSource = new PooledCassandraDataSource(connectionPoolDataSource);
+        DataSource pooledCassandraDataSource = new PooledCassandraDataSource(
+                connectionPoolDataSource);
 
-		Connection connection = pooledCassandraDataSource.getConnection();
-		for (int i = 0; i < 10000; i++)
-		{
-			PreparedStatement preparedStatement = connection.prepareStatement("SELECT someInt FROM pooled_test WHERE somekey = ?");
-			preparedStatement.close();
-		}
-		connection.close();
-	}
+        Connection connection = pooledCassandraDataSource.getConnection();
+        for (int i = 0; i < 10000; i++) {
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement("SELECT someInt FROM pooled_test WHERE somekey = ?");
+            preparedStatement.close();
+        }
+        connection.close();
+    }
 
-	@Test
-	public void preparedStatement() throws Exception
-	{
-		CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE, USER, PASSWORD, VERSION,CONSISTENCY);
+    @Test
+    public void preparedStatement() throws Exception {
+        CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE,
+                USER, PASSWORD, VERSION, CONSISTENCY);
 
-		DataSource pooledCassandraDataSource = new PooledCassandraDataSource(connectionPoolDataSource);
+        DataSource pooledCassandraDataSource = new PooledCassandraDataSource(
+                connectionPoolDataSource);
 
-		Connection connection = pooledCassandraDataSource.getConnection();
+        Connection connection = pooledCassandraDataSource.getConnection();
 
-		PreparedStatement statement = connection.prepareStatement("SELECT someInt FROM pooled_test WHERE somekey = ?");
-		statement.setString(1, "world");
+        PreparedStatement statement = connection
+                .prepareStatement("SELECT someInt FROM pooled_test WHERE somekey = ?");
+        statement.setString(1, "world");
 
-		ResultSet resultSet = statement.executeQuery();
-		assert resultSet.next();
-		assert resultSet.getInt(1) == 1;
-		assert resultSet.next() == false;
-		resultSet.close();
+        ResultSet resultSet = statement.executeQuery();
+        assert resultSet.next();
+        assert resultSet.getInt(1) == 1;
+        assert resultSet.next() == false;
+        resultSet.close();
 
-		statement.close();
-		connection.close();
-	}
+        statement.close();
+        connection.close();
+    }
 
-	@Test
-	public void preparedStatementClose() throws Exception
-	{
-		CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE, USER, PASSWORD, VERSION,CONSISTENCY);
+    @Test
+    public void preparedStatementClose() throws Exception {
+        CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE,
+                USER, PASSWORD, VERSION, CONSISTENCY);
 
-		DataSource pooledCassandraDataSource = new PooledCassandraDataSource(connectionPoolDataSource);
+        DataSource pooledCassandraDataSource = new PooledCassandraDataSource(
+                connectionPoolDataSource);
 
-		Connection connection = pooledCassandraDataSource.getConnection();
+        Connection connection = pooledCassandraDataSource.getConnection();
 
-		PreparedStatement statement = connection.prepareStatement("SELECT someInt FROM pooled_test WHERE somekey = ?");
-		statement.setString(1, "world");
+        PreparedStatement statement = connection
+                .prepareStatement("SELECT someInt FROM pooled_test WHERE somekey = ?");
+        statement.setString(1, "world");
 
-		ResultSet resultSet = statement.executeQuery();
-		assert resultSet.next();
-		assert resultSet.getInt(1) == 1;
-		assert resultSet.next() == false;
-		resultSet.close();
+        ResultSet resultSet = statement.executeQuery();
+        assert resultSet.next();
+        assert resultSet.getInt(1) == 1;
+        assert resultSet.next() == false;
+        resultSet.close();
 
-		connection.close();
-		
-		assert statement.isClosed();
-	}
+        connection.close();
 
-	@Test
-	public void statement() throws Exception
-	{
-		CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE, USER, PASSWORD, VERSION,CONSISTENCY);
+        assert statement.isClosed();
+    }
 
-		DataSource pooledCassandraDataSource = new PooledCassandraDataSource(connectionPoolDataSource);
+    @Test
+    public void statement() throws Exception {
+        CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE,
+                USER, PASSWORD, VERSION, CONSISTENCY);
 
-		Connection connection = pooledCassandraDataSource.getConnection();
+        DataSource pooledCassandraDataSource = new PooledCassandraDataSource(
+                connectionPoolDataSource);
 
-		Statement statement = connection.createStatement();
+        Connection connection = pooledCassandraDataSource.getConnection();
 
-		ResultSet resultSet = statement.executeQuery("SELECT someInt FROM pooled_test WHERE somekey = 'world'");
-		assert resultSet.next();
-		assert resultSet.getInt(1) == 1;
-		assert resultSet.next() == false;
-		resultSet.close();
+        Statement statement = connection.createStatement();
 
-		statement.close();
-		connection.close();
-	}
+        ResultSet resultSet = statement
+                .executeQuery("SELECT someInt FROM pooled_test WHERE somekey = 'world'");
+        assert resultSet.next();
+        assert resultSet.getInt(1) == 1;
+        assert resultSet.next() == false;
+        resultSet.close();
 
-	@Test
-	public void statementClosed() throws Exception
-	{
-		CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE, USER, PASSWORD, VERSION,CONSISTENCY);
+        statement.close();
+        connection.close();
+    }
 
-		DataSource pooledCassandraDataSource = new PooledCassandraDataSource(connectionPoolDataSource);
+    @Test
+    public void statementClosed() throws Exception {
+        CassandraDataSource connectionPoolDataSource = new CassandraDataSource(HOST, PORT, KEYSPACE,
+                USER, PASSWORD, VERSION, CONSISTENCY);
 
-		Connection connection = pooledCassandraDataSource.getConnection();
+        DataSource pooledCassandraDataSource = new PooledCassandraDataSource(
+                connectionPoolDataSource);
 
-		Statement statement = connection.createStatement();
+        Connection connection = pooledCassandraDataSource.getConnection();
 
-		ResultSet resultSet = statement.executeQuery("SELECT someInt FROM pooled_test WHERE somekey = 'world'");
-		assert resultSet.next();
-		assert resultSet.getInt(1) == 1;
-		assert resultSet.next() == false;
-		resultSet.close();
+        Statement statement = connection.createStatement();
 
-		connection.close();
-		
-		assert statement.isClosed();
-	}
+        ResultSet resultSet = statement
+                .executeQuery("SELECT someInt FROM pooled_test WHERE somekey = 'world'");
+        assert resultSet.next();
+        assert resultSet.getInt(1) == 1;
+        assert resultSet.next() == false;
+        resultSet.close();
+
+        connection.close();
+
+        assert statement.isClosed();
+    }
 }

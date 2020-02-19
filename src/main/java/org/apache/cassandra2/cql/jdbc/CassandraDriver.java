@@ -20,5 +20,6 @@ import java.sql.Driver;
 /**
  * The Class CassandraDriver.
  */
-public class CassandraDriver extends com.github.adejanovski.cassandra.jdbc.CassandraDriver implements Driver
-{}
+public class CassandraDriver extends com.github.adejanovski.cassandra.jdbc.CassandraDriver
+        implements Driver {
+}

@@ -19,44 +19,41 @@ import java.sql.RowId;
 
 import org.apache.cassandra.utils.ByteBufferUtil;
 
-class CassandraRowId implements RowId
-{
+class CassandraRowId implements RowId {
     private final ByteBuffer bytes;
-    
-    public CassandraRowId (ByteBuffer bytes)
-    {
+
+    public CassandraRowId(ByteBuffer bytes) {
         this.bytes = bytes;
     }
 
-    public byte[] getBytes()
-    {
+    public byte[] getBytes() {
         return ByteBufferUtil.getArray(bytes);
     }
-    
-    public String toString()
-    {
+
+    public String toString() {
         return ByteBufferUtil.bytesToHex(bytes);
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((bytes == null) ? 0 : bytes.hashCode());
         return result;
     }
 
-    public boolean equals(Object obj)
-    {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
         CassandraRowId other = (CassandraRowId) obj;
-        if (bytes == null)
-        {
-            if (other.bytes != null) return false;
-        }
-        else if (!bytes.equals(other.bytes)) return false;
+        if (bytes == null) {
+            if (other.bytes != null)
+                return false;
+        } else if (!bytes.equals(other.bytes))
+            return false;
         return true;
     }
 }

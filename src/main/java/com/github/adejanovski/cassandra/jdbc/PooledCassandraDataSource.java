@@ -29,153 +29,123 @@ import javax.sql.PooledConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PooledCassandraDataSource implements DataSource, ConnectionEventListener
-{
-	private static final int CONNECTION_IS_VALID_TIMEOUT = 5;
+public class PooledCassandraDataSource implements DataSource, ConnectionEventListener {
+    private static final int CONNECTION_IS_VALID_TIMEOUT = 5;
 
-	private static final int MIN_POOL_SIZE = 4;
+    private static final int MIN_POOL_SIZE = 4;
 
-	protected static final String NOT_SUPPORTED = "the Cassandra implementation does not support this method";
+    protected static final String NOT_SUPPORTED = "the Cassandra implementation does not support this method";
 
-	private static final Logger logger = LoggerFactory.getLogger(PooledCassandraDataSource.class);
+    private static final Logger logger = LoggerFactory.getLogger(PooledCassandraDataSource.class);
 
-	private CassandraDataSource connectionPoolDataSource;
+    private CassandraDataSource connectionPoolDataSource;
 
-	private volatile Set<PooledCassandraConnection> freeConnections = new HashSet<PooledCassandraConnection>();
+    private volatile Set<PooledCassandraConnection> freeConnections = new HashSet<PooledCassandraConnection>();
 
-	private volatile Set<PooledCassandraConnection> usedConnections = new HashSet<PooledCassandraConnection>();
+    private volatile Set<PooledCassandraConnection> usedConnections = new HashSet<PooledCassandraConnection>();
 
-	public PooledCassandraDataSource(CassandraDataSource connectionPoolDataSource) throws SQLException
-	{
-		this.connectionPoolDataSource = connectionPoolDataSource;
-	}
+    public PooledCassandraDataSource(CassandraDataSource connectionPoolDataSource)
+            throws SQLException {
+        this.connectionPoolDataSource = connectionPoolDataSource;
+    }
 
-	@Override
-	public synchronized Connection getConnection() throws SQLException
-	{
-		PooledCassandraConnection pooledConnection;
-		if (freeConnections.isEmpty())
-		{
-			pooledConnection = connectionPoolDataSource.getPooledConnection();
-			pooledConnection.addConnectionEventListener(this);
-		}
-		else
-		{
-			pooledConnection = freeConnections.iterator().next();
-			freeConnections.remove(pooledConnection);
-		}
-		usedConnections.add(pooledConnection);
-		return new ManagedConnection(pooledConnection);
-	}
+    @Override
+    public synchronized Connection getConnection() throws SQLException {
+        PooledCassandraConnection pooledConnection;
+        if (freeConnections.isEmpty()) {
+            pooledConnection = connectionPoolDataSource.getPooledConnection();
+            pooledConnection.addConnectionEventListener(this);
+        } else {
+            pooledConnection = freeConnections.iterator().next();
+            freeConnections.remove(pooledConnection);
+        }
+        usedConnections.add(pooledConnection);
+        return new ManagedConnection(pooledConnection);
+    }
 
-	@Override
-	public Connection getConnection(String username, String password) throws SQLException
-	{
-		throw new SQLFeatureNotSupportedException(NOT_SUPPORTED);
-	}
+    @Override
+    public Connection getConnection(String username, String password) throws SQLException {
+        throw new SQLFeatureNotSupportedException(NOT_SUPPORTED);
+    }
 
-	@Override
-	public synchronized void connectionClosed(ConnectionEvent event)
-	{
-		PooledCassandraConnection connection = (PooledCassandraConnection) event.getSource();
-		usedConnections.remove(connection);
-		int freeConnectionsCount = freeConnections.size();
-		if (freeConnectionsCount < MIN_POOL_SIZE)
-		{
-			freeConnections.add(connection);
-		}
-		else
-		{
-			try
-			{
-				connection.close();
-			}
-			catch (SQLException e)
-			{
-				logger.error(e.getMessage());
-			}
-		}
-	}
+    @Override
+    public synchronized void connectionClosed(ConnectionEvent event) {
+        PooledCassandraConnection connection = (PooledCassandraConnection) event.getSource();
+        usedConnections.remove(connection);
+        int freeConnectionsCount = freeConnections.size();
+        if (freeConnectionsCount < MIN_POOL_SIZE) {
+            freeConnections.add(connection);
+        } else {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        }
+    }
 
-	@Override
-	public synchronized void connectionErrorOccurred(ConnectionEvent event)
-	{
-		PooledCassandraConnection connection = (PooledCassandraConnection) event.getSource();
-		try
-		{
-			if (!connection.getConnection().isValid(CONNECTION_IS_VALID_TIMEOUT)) {
-				connection.getConnection().close();
-			}
-		}
-		catch (SQLException e)
-		{
-			logger.error(e.getMessage());
-		}
-		usedConnections.remove(connection);
-	}
+    @Override
+    public synchronized void connectionErrorOccurred(ConnectionEvent event) {
+        PooledCassandraConnection connection = (PooledCassandraConnection) event.getSource();
+        try {
+            if (!connection.getConnection().isValid(CONNECTION_IS_VALID_TIMEOUT)) {
+                connection.getConnection().close();
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        usedConnections.remove(connection);
+    }
 
-	public synchronized void close()
-	{
-		closePooledConnections(usedConnections);
-		closePooledConnections(freeConnections);
-	}
+    public synchronized void close() {
+        closePooledConnections(usedConnections);
+        closePooledConnections(freeConnections);
+    }
 
-	private void closePooledConnections(Set<PooledCassandraConnection> usedConnections2)
-	{
-		for (PooledConnection connection : usedConnections2)
-		{
-			try
-			{
-				connection.close();
-			}
-			catch (SQLException e)
-			{
-				logger.error(e.getMessage());
-			}
-		}
-	}
+    private void closePooledConnections(Set<PooledCassandraConnection> usedConnections2) {
+        for (PooledConnection connection : usedConnections2) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        }
+    }
 
-	@Override
-	public int getLoginTimeout()
-	{
-		return connectionPoolDataSource.getLoginTimeout();
-	}
+    @Override
+    public int getLoginTimeout() {
+        return connectionPoolDataSource.getLoginTimeout();
+    }
 
-	@Override
-	public void setLoginTimeout(int secounds)
-	{
-		connectionPoolDataSource.setLoginTimeout(secounds);
-	}
+    @Override
+    public void setLoginTimeout(int secounds) {
+        connectionPoolDataSource.setLoginTimeout(secounds);
+    }
 
-	@Override
-	public PrintWriter getLogWriter()
-	{
-		return connectionPoolDataSource.getLogWriter();
-	}
+    @Override
+    public PrintWriter getLogWriter() {
+        return connectionPoolDataSource.getLogWriter();
+    }
 
-	@Override
-	public void setLogWriter(PrintWriter writer)
-	{
-		connectionPoolDataSource.setLogWriter(writer);
-	}
+    @Override
+    public void setLogWriter(PrintWriter writer) {
+        connectionPoolDataSource.setLogWriter(writer);
+    }
 
-	@Override
-	public boolean isWrapperFor(Class<?> arg0)
-	{
-		return connectionPoolDataSource.isWrapperFor(arg0);
-	}
+    @Override
+    public boolean isWrapperFor(Class<?> arg0) {
+        return connectionPoolDataSource.isWrapperFor(arg0);
+    }
 
-	@Override
-	public <T> T unwrap(Class<T> arg0) throws SQLException
-	{
-		return connectionPoolDataSource.unwrap(arg0);
-	}
+    @Override
+    public <T> T unwrap(Class<T> arg0) throws SQLException {
+        return connectionPoolDataSource.unwrap(arg0);
+    }
 
-	// Method not annotated with @Override since getParentLogger() is a new method
-	// in the CommonDataSource interface starting with JDK7 and this annotation
-	// would cause compilation errors with JDK6.
-    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException
-    {
+    // Method not annotated with @Override since getParentLogger() is a new method
+    // in the CommonDataSource interface starting with JDK7 and this annotation
+    // would cause compilation errors with JDK6.
+    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return connectionPoolDataSource.getParentLogger();
     }
 }

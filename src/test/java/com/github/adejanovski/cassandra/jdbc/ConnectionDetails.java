@@ -30,7 +30,8 @@ public final class ConnectionDetails {
 
     private ConnectionDetails() {
         Properties p = new Properties();
-        InputStream stream = getClass().getResourceAsStream(getClass().getSimpleName() + ".properties");
+        InputStream stream = getClass()
+                .getResourceAsStream(getClass().getSimpleName() + ".properties");
         try {
             p.load(stream);
         } catch (Exception e) {
@@ -42,7 +43,7 @@ public final class ConnectionDetails {
                 // ignore
             }
         }
-        
+
         host = p.getProperty("host", "localhost");
         int port;
         try {

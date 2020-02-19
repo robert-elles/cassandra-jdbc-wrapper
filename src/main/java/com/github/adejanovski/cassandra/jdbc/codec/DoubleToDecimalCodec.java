@@ -12,37 +12,39 @@ import com.datastax.driver.core.exceptions.InvalidTypeException;
 
 public class DoubleToDecimalCodec extends TypeCodec<Double> {
 
-	public DoubleToDecimalCodec(Class<Double> javaClass) {
-		super(DataType.decimal(), javaClass);
-	}
+    public DoubleToDecimalCodec(Class<Double> javaClass) {
+        super(DataType.decimal(), javaClass);
+    }
 
-	@Override
-	public ByteBuffer serialize(Double paramT, ProtocolVersion paramProtocolVersion) throws InvalidTypeException {
-		if (paramT == null) {
-			return null;
-		}
-		return ByteBufferUtil.bytes(paramT);
-	}
+    @Override
+    public ByteBuffer serialize(Double paramT, ProtocolVersion paramProtocolVersion)
+            throws InvalidTypeException {
+        if (paramT == null) {
+            return null;
+        }
+        return ByteBufferUtil.bytes(paramT);
+    }
 
-	@Override
-	public Double deserialize(ByteBuffer paramByteBuffer, ProtocolVersion paramProtocolVersion) throws InvalidTypeException {
-		if (paramByteBuffer == null) {
-			return null;
+    @Override
+    public Double deserialize(ByteBuffer paramByteBuffer, ProtocolVersion paramProtocolVersion)
+            throws InvalidTypeException {
+        if (paramByteBuffer == null) {
+            return null;
 
-		}
-		// always duplicate the ByteBuffer instance before consuming it!
-		Float value = ByteBufferUtil.toFloat(paramByteBuffer.duplicate());		
-		return value.doubleValue();
-	}
+        }
+        // always duplicate the ByteBuffer instance before consuming it!
+        Float value = ByteBufferUtil.toFloat(paramByteBuffer.duplicate());
+        return value.doubleValue();
+    }
 
-	@Override
-	public Double parse(String paramString) throws InvalidTypeException {
-		return Double.valueOf(paramString);
-	}
+    @Override
+    public Double parse(String paramString) throws InvalidTypeException {
+        return Double.valueOf(paramString);
+    }
 
-	@Override
-	public String format(Double paramT) throws InvalidTypeException {
-		return String.valueOf(paramT);
-	}
+    @Override
+    public String format(Double paramT) throws InvalidTypeException {
+        return String.valueOf(paramT);
+    }
 
 }

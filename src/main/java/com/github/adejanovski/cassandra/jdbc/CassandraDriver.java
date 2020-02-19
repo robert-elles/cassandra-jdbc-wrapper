@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Class CassandraDriver.
  */
-public class CassandraDriver implements Driver
-{
+public class CassandraDriver implements Driver {
     public static final int DVR_MAJOR_VERSION = 2;
 
     public static final int DVR_MINOR_VERSION = 1;
@@ -46,50 +45,43 @@ public class CassandraDriver implements Driver
 
     private static final Logger logger = LoggerFactory.getLogger(CassandraDriver.class);
 
-    static
-    {
+    static {
         // Register the CassandraDriver with DriverManager
-        try
-        {
+        try {
             CassandraDriver driverInst = new CassandraDriver();
             DriverManager.registerDriver(driverInst);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    // Caches Sessions so that multiple CassandraConnections created with the same parameters use the same Session.
-    private final LoadingCache<Map<String, String>, SessionHolder> sessionsCache = CacheBuilder.newBuilder()
-        .build(new CacheLoader<Map<String, String>, SessionHolder>() {
-                   @Override
-                   public SessionHolder load(final Map<String, String> params) throws Exception {
-                       return new SessionHolder(params, sessionsCache);
-                   }
-               }
-        );
+    // Caches Sessions so that multiple CassandraConnections created with the same parameters use
+    // the same Session.
+    private final LoadingCache<Map<String, String>, SessionHolder> sessionsCache = CacheBuilder
+            .newBuilder().build(new CacheLoader<Map<String, String>, SessionHolder>() {
+                @Override
+                public SessionHolder load(final Map<String, String> params) throws Exception {
+                    return new SessionHolder(params, sessionsCache);
+                }
+            });
 
     /**
      * Method to validate whether provided connection url matches with pattern or not.
      */
-    public boolean acceptsURL(String url) throws SQLException
-    {
+    public boolean acceptsURL(String url) throws SQLException {
         return url.startsWith(PROTOCOL);
     }
 
     /**
      * Method to return connection instance for given connection url and connection props.
      */
-    public Connection connect(String url, Properties props) throws SQLException
-    {
-        if (acceptsURL(url))
-        {
+    public Connection connect(String url, Properties props) throws SQLException {
+        if (acceptsURL(url)) {
             ImmutableMap.Builder<String, String> params = ImmutableMap.builder();
 
             Enumeration<Object> keys = props.keys();
             while (keys.hasMoreElements()) {
-                String key = (String)keys.nextElement();
+                String key = (String) keys.nextElement();
                 params.put(key, props.getProperty(key));
             }
             params.put(SessionHolder.URL_KEY, url);
@@ -103,42 +95,42 @@ public class CassandraDriver implements Driver
 
                     if (sessionHolder.acquire())
                         return new CassandraConnection(sessionHolder);
-                    // If we failed to acquire, it means we raced with the release of the last reference to the session
+                    // If we failed to acquire, it means we raced with the release of the last
+                    // reference to the session
                     // (which also removes it from the cache).
                     // Loop to try again, that will cause the cache to create a new instance.
                 }
             } catch (ExecutionException e) {
                 Throwable cause = e.getCause();
                 if (cause instanceof SQLException)
-                    throw (SQLException)cause;
-				throw new SQLNonTransientConnectionException("Unexpected error while creating connection", e);
+                    throw (SQLException) cause;
+                throw new SQLNonTransientConnectionException(
+                        "Unexpected error while creating connection", e);
             }
         }
-		return null; // signal it is the wrong driver for this protocol:subprotocol
+        return null; // signal it is the wrong driver for this protocol:subprotocol
     }
 
     /**
      * Returns default major version.
      */
-    public int getMajorVersion()
-    {
+    public int getMajorVersion() {
         return DVR_MAJOR_VERSION;
     }
 
     /**
      * Returns default minor version.
      */
-    public int getMinorVersion()
-    {
+    public int getMinorVersion() {
         return DVR_MINOR_VERSION;
     }
 
     /**
      * Returns default driver property info object.
      */
-    public DriverPropertyInfo[] getPropertyInfo(String url, Properties props) throws SQLException
-    {
-        if (props == null) props = new Properties();
+    public DriverPropertyInfo[] getPropertyInfo(String url, Properties props) throws SQLException {
+        if (props == null)
+            props = new Properties();
 
         DriverPropertyInfo[] info = new DriverPropertyInfo[2];
 
@@ -154,13 +146,11 @@ public class CassandraDriver implements Driver
     /**
      * Returns true, if it is jdbc compliant.
      */
-    public boolean jdbcCompliant()
-    {
+    public boolean jdbcCompliant() {
         return false;
     }
-    
-    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException
-    {
-    	throw new SQLFeatureNotSupportedException(String.format(NOT_SUPPORTED));
+
+    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException(String.format(NOT_SUPPORTED));
     }
 }

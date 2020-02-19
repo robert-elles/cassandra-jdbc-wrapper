@@ -17,74 +17,59 @@ package com.github.adejanovski.cassandra.jdbc;
 import java.nio.ByteBuffer;
 import java.sql.Types;
 
-
-
-public class JdbcBytes extends AbstractJdbcType<ByteBuffer>
-{
+public class JdbcBytes extends AbstractJdbcType<ByteBuffer> {
     public static final JdbcBytes instance = new JdbcBytes();
 
-    JdbcBytes() {}
+    JdbcBytes() {
+    }
 
-    public boolean isCaseSensitive()
-    {
+    public boolean isCaseSensitive() {
         return false;
     }
 
-    public int getScale(ByteBuffer obj)
-    {
+    public int getScale(ByteBuffer obj) {
         return -1;
     }
 
-    public int getPrecision(ByteBuffer obj)
-    {
+    public int getPrecision(ByteBuffer obj) {
         return -1;
     }
 
-    public boolean isCurrency()
-    {
+    public boolean isCurrency() {
         return false;
     }
 
-    public boolean isSigned()
-    {
+    public boolean isSigned() {
         return false;
     }
 
-    public String toString(ByteBuffer obj)
-    {
+    public String toString(ByteBuffer obj) {
         return "";
     }
 
-    public boolean needsQuotes()
-    {
+    public boolean needsQuotes() {
         return true;
     }
 
-    
-
-    public Class<ByteBuffer> getType()
-    {
+    public Class<ByteBuffer> getType() {
         return ByteBuffer.class;
     }
 
-    public int getJdbcType()
-    {
+    public int getJdbcType() {
         return Types.BINARY;
     }
 
-    public ByteBuffer compose(ByteBuffer bytes)
-    {
+    public ByteBuffer compose(ByteBuffer bytes) {
         return bytes.duplicate();
     }
 
-    public ByteBuffer decompose(ByteBuffer value)
-    {
+    public ByteBuffer decompose(ByteBuffer value) {
         return value;
     }
 
-	@Override
-	public ByteBuffer compose(Object obj) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public ByteBuffer compose(Object obj) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

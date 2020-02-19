@@ -17,66 +17,53 @@ package com.github.adejanovski.cassandra.jdbc;
 import java.nio.ByteBuffer;
 import java.sql.Types;
 
-
-public class JdbcDouble extends AbstractJdbcType<Double>
-{
+public class JdbcDouble extends AbstractJdbcType<Double> {
     public static final JdbcDouble instance = new JdbcDouble();
 
-    JdbcDouble() {}
+    JdbcDouble() {
+    }
 
-    public boolean isCaseSensitive()
-    {
+    public boolean isCaseSensitive() {
         return false;
     }
 
-    public int getScale(Double obj)
-    {
+    public int getScale(Double obj) {
         return 300;
     }
 
-    public int getPrecision(Double obj)
-    {
+    public int getPrecision(Double obj) {
         return 15;
     }
 
-    public boolean isCurrency()
-    {
+    public boolean isCurrency() {
         return false;
     }
 
-    public boolean isSigned()
-    {
+    public boolean isSigned() {
         return true;
     }
 
-    public String toString(Double obj)
-    {
+    public String toString(Double obj) {
         return obj.toString();
     }
 
-    public boolean needsQuotes()
-    {
+    public boolean needsQuotes() {
         return false;
     }
 
-
-    public Class<Double> getType()
-    {
+    public Class<Double> getType() {
         return Double.class;
     }
 
-    public int getJdbcType()
-    {
+    public int getJdbcType() {
         return Types.DOUBLE;
     }
 
-    public Double compose(Object value)
-    {
-        return (Double)value;
+    public Double compose(Object value) {
+        return (Double) value;
     }
 
-    public Object decompose(Double value)
-    {
-        return (value==null) ? null : (Object)value;
+    public Object decompose(Double value) {
+        return (value == null) ? null : (Object) value;
     }
 }

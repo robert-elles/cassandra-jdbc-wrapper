@@ -17,69 +17,53 @@ package com.github.adejanovski.cassandra.jdbc;
 import java.nio.ByteBuffer;
 import java.sql.Types;
 
-
-
-public class JdbcInt32 extends AbstractJdbcType<Integer>
-{
+public class JdbcInt32 extends AbstractJdbcType<Integer> {
     public static final JdbcInt32 instance = new JdbcInt32();
 
-    JdbcInt32()
-    {
+    JdbcInt32() {
     }
 
-    public boolean isCaseSensitive()
-    {
+    public boolean isCaseSensitive() {
         return false;
     }
 
-    public int getScale(Integer obj)
-    {
+    public int getScale(Integer obj) {
         return 0;
     }
 
-    public int getPrecision(Integer obj)
-    {
+    public int getPrecision(Integer obj) {
         return obj.toString().length();
     }
 
-    public boolean isCurrency()
-    {
+    public boolean isCurrency() {
         return false;
     }
 
-    public boolean isSigned()
-    {
+    public boolean isSigned() {
         return true;
     }
 
-    public String toString(Integer obj)
-    {
+    public String toString(Integer obj) {
         return obj.toString();
     }
 
-    public boolean needsQuotes()
-    {
+    public boolean needsQuotes() {
         return false;
     }
 
-   
-    public Class<Integer> getType()
-    {
+    public Class<Integer> getType() {
         return Integer.class;
     }
 
-    public int getJdbcType()
-    {
+    public int getJdbcType() {
         return Types.INTEGER;
     }
 
-    public Integer compose(Object value)
-    {
-        return (Integer)value;
+    public Integer compose(Object value) {
+        return (Integer) value;
     }
 
-    public Object decompose(Integer value)
-    {
-        return (Object)value;
+    public Object decompose(Integer value) {
+        return (Object) value;
     }
 }

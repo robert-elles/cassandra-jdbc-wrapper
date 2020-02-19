@@ -23,39 +23,36 @@ import com.datastax.driver.core.exceptions.InvalidTypeException;
  * Metadata describing the columns returned in a {@link CassandraResultSet} or a
  * {@link CassandraPreparedStatement}.
  * <p>
- * A {@code columnDefinitions}} instance is mainly a list of
- * {@code ColumnsDefinitions.Definition}. The definitions or metadata for a column
- * can be accessed either by:
+ * A {@code columnDefinitions}} instance is mainly a list of {@code ColumnsDefinitions.Definition}.
+ * The definitions or metadata for a column can be accessed either by:
  * <ul>
- *   <li>index (indexed from 0)</li>
- *   <li>name</li>
+ * <li>index (indexed from 0)</li>
+ * <li>name</li>
  * </ul>
  * <p>
- * When accessed by name, column selection is case insensitive. In case multiple
- * columns only differ by the case of their name, then the column returned with
- * be the first column that has been defined in CQL without forcing case sensitivity
- * (that is, it has either been defined without quotes or is fully lowercase).
- * If none of the columns have been defined in this manner, the first column matching
- * (with case insensitivity) is returned. You can force the case of a selection
- * by double quoting the name.
+ * When accessed by name, column selection is case insensitive. In case multiple columns only differ
+ * by the case of their name, then the column returned with be the first column that has been
+ * defined in CQL without forcing case sensitivity (that is, it has either been defined without
+ * quotes or is fully lowercase). If none of the columns have been defined in this manner, the first
+ * column matching (with case insensitivity) is returned. You can force the case of a selection by
+ * double quoting the name.
  * <p>
  * For example:
  * <ul>
- *   <li>If {@code cd} contains column {@code fOO}, then {@code cd.contains("foo")},
- *   {@code cd.contains("fOO")} and {@code cd.contains("Foo")} will return {@code true}.</li>
- *   <li>If {@code cd} contains both {@code foo} and {@code FOO} then:
- *      <ul>
- *          <li>{@code cd.getType("foo")}, {@code cd.getType("fOO")} and {@code cd.getType("FOO")}
- *          will all match column {@code foo}.</li>
- *          <li>{@code cd.getType("\"FOO\"")} will match column {@code FOO}</li>
- *      </ul>
+ * <li>If {@code cd} contains column {@code fOO}, then {@code cd.contains("foo")},
+ * {@code cd.contains("fOO")} and {@code cd.contains("Foo")} will return {@code true}.</li>
+ * <li>If {@code cd} contains both {@code foo} and {@code FOO} then:
+ * <ul>
+ * <li>{@code cd.getType("foo")}, {@code cd.getType("fOO")} and {@code cd.getType("FOO")} will all
+ * match column {@code foo}.</li>
+ * <li>{@code cd.getType("\"FOO\"")} will match column {@code FOO}</li>
  * </ul>
- * Note that the preceding rules mean that if a {@code ColumnDefinitions} object
- * contains multiple occurrences of the exact same name (be it the same column
- * multiple times or columns from different tables with the same name), you
- * will have to use selection by index to disambiguate.
+ * </ul>
+ * Note that the preceding rules mean that if a {@code ColumnDefinitions} object contains multiple
+ * occurrences of the exact same name (be it the same column multiple times or columns from
+ * different tables with the same name), you will have to use selection by index to disambiguate.
  */
-public class ColumnDefinitions implements Iterable<ColumnDefinitions.Definition>  {
+public class ColumnDefinitions implements Iterable<ColumnDefinitions.Definition> {
 
     static final ColumnDefinitions EMPTY = new ColumnDefinitions(new Definition[0]);
 
@@ -69,7 +66,7 @@ public class ColumnDefinitions implements Iterable<ColumnDefinitions.Definition>
 
         for (int i = 0; i < defs.length; i++) {
             // Be optimistic, 99% of the time, previous will be null.
-            int[] previous = this.byName.put(defs[i].name.toLowerCase(), new int[]{ i });
+            int[] previous = this.byName.put(defs[i].name.toLowerCase(), new int[] { i });
             if (previous != null) {
                 int[] indexes = new int[previous.length + 1];
                 System.arraycopy(previous, 0, indexes, 0, previous.length);
@@ -80,8 +77,7 @@ public class ColumnDefinitions implements Iterable<ColumnDefinitions.Definition>
     }
 
     /**
-     * Returns the number of columns described by this {@code Columns}
-     * instance.
+     * Returns the number of columns described by this {@code Columns} instance.
      *
      * @return the number of columns described by this metadata.
      */
@@ -93,8 +89,8 @@ public class ColumnDefinitions implements Iterable<ColumnDefinitions.Definition>
      * Returns whether this metadata contains a given name.
      *
      * @param name the name to check.
-     * @return {@code true} if this metadata contains the column named {@code name},
-     * {@code false} otherwise.
+     * @return {@code true} if this metadata contains the column named {@code name}, {@code false}
+     *         otherwise.
      */
     public boolean contains(String name) {
         return findAllIdx(name) != null;
@@ -105,7 +101,7 @@ public class ColumnDefinitions implements Iterable<ColumnDefinitions.Definition>
      *
      * @param name the name of the column.
      * @return the index of the first occurrence of {@code name} in this metadata if
-     * {@code contains(name)}, -1 otherwise.
+     *         {@code contains(name)}, -1 otherwise.
      */
     public int getIndexOf(String name) {
         return findFirstIdx(name);
@@ -288,13 +284,15 @@ public class ColumnDefinitions implements Iterable<ColumnDefinitions.Definition>
     void checkType(int i, DataType.Name name) {
         DataType defined = getType(i);
         if (name != defined.getName())
-            throw new InvalidTypeException(String.format("Column %s is of type %s", getName(i), defined));
+            throw new InvalidTypeException(
+                    String.format("Column %s is of type %s", getName(i), defined));
     }
 
     DataType.Name checkType(int i, DataType.Name name1, DataType.Name name2) {
         DataType defined = getType(i);
         if (name1 != defined.getName() && name2 != defined.getName())
-            throw new InvalidTypeException(String.format("Column %s is of type %s", getName(i), defined));
+            throw new InvalidTypeException(
+                    String.format("Column %s is of type %s", getName(i), defined));
 
         return defined.getName();
     }
@@ -302,7 +300,8 @@ public class ColumnDefinitions implements Iterable<ColumnDefinitions.Definition>
     DataType.Name checkType(int i, DataType.Name name1, DataType.Name name2, DataType.Name name3) {
         DataType defined = getType(i);
         if (name1 != defined.getName() && name2 != defined.getName() && name3 != defined.getName())
-            throw new InvalidTypeException(String.format("Column %s is of type %s", getName(i), defined));
+            throw new InvalidTypeException(
+                    String.format("Column %s is of type %s", getName(i), defined));
 
         return defined.getName();
     }
@@ -362,19 +361,17 @@ public class ColumnDefinitions implements Iterable<ColumnDefinitions.Definition>
 
         @Override
         public final int hashCode() {
-            return Arrays.hashCode(new Object[]{ keyspace, table, name, type});
+            return Arrays.hashCode(new Object[] { keyspace, table, name, type });
         }
 
         @Override
         public final boolean equals(Object o) {
-            if(!(o instanceof Definition))
+            if (!(o instanceof Definition))
                 return false;
 
-            Definition other = (Definition)o;
-            return keyspace.equals(other.keyspace)
-                && table.equals(other.table)
-                && name.equals(other.name)
-                && type.equals(other.type);
+            Definition other = (Definition) o;
+            return keyspace.equals(other.keyspace) && table.equals(other.table)
+                    && name.equals(other.name) && type.equals(other.type);
         }
     }
 }

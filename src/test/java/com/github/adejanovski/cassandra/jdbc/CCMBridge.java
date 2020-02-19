@@ -54,17 +54,17 @@ public class CCMBridge {
 
     private static final String CASSANDRA_VERSION_REGEXP = "\\d\\.\\d\\.\\d+(-\\w+)?";
 
-	public static final Object SIMPLE_KEYSPACE = "simple_ks";
+    public static final Object SIMPLE_KEYSPACE = "simple_ks";
 
     static File CASSANDRA_DIR;
     static String CASSANDRA_VERSION;
     static {
         String version = System.getProperty("cassandra.version");
-        if(version!=null){
-        	if (version.matches(CASSANDRA_VERSION_REGEXP)) {
-        		CASSANDRA_DIR = null;
-        		CASSANDRA_VERSION = "-v " + version;
-        	}
+        if (version != null) {
+            if (version.matches(CASSANDRA_VERSION_REGEXP)) {
+                CASSANDRA_DIR = null;
+                CASSANDRA_VERSION = "-v " + version;
+            }
         }
 
         String ip_prefix = System.getProperty("ipprefix");
@@ -78,8 +78,8 @@ public class CCMBridge {
     private final File ccmDir;
 
     private CCMBridge() {
-        //this.ccmDir = Files.createTempDir();
-    	this.ccmDir = null;
+        // this.ccmDir = Files.createTempDir();
+        this.ccmDir = null;
     }
 
     public static CCMBridge create(String name) {
@@ -93,23 +93,25 @@ public class CCMBridge {
     public static CCMBridge create(String name, int nbNodes, String... options) {
         checkArgument(!"current".equals(name.toLowerCase()), "cluster can't be called \"current\"");
         CCMBridge bridge = new CCMBridge();
-        bridge.execute("ccm create %s -n %d -s -i %s -b %s " + Joiner.on(" ").join(options), name, nbNodes, IP_PREFIX,
-                CASSANDRA_VERSION);
+        bridge.execute("ccm create %s -n %d -s -i %s -b %s " + Joiner.on(" ").join(options), name,
+                nbNodes, IP_PREFIX, CASSANDRA_VERSION);
         return bridge;
     }
 
-    public static CCMBridge createWithCustomVersion(String name, int nbNodes, String cassandraVersion) {
+    public static CCMBridge createWithCustomVersion(String name, int nbNodes,
+            String cassandraVersion) {
         checkArgument(!"current".equals(name.toLowerCase()), "cluster can't be called \"current\"");
         CCMBridge bridge = new CCMBridge();
-        bridge.execute("ccm create %s -n %d -s -i %s -b -v %s ", name, nbNodes, IP_PREFIX, cassandraVersion);
+        bridge.execute("ccm create %s -n %d -s -i %s -b -v %s ", name, nbNodes, IP_PREFIX,
+                cassandraVersion);
         return bridge;
     }
 
     public static CCMBridge create(String name, int nbNodesDC1, int nbNodesDC2) {
         checkArgument(!"current".equals(name.toLowerCase()), "cluster can't be called \"current\"");
         CCMBridge bridge = new CCMBridge();
-        bridge.execute("ccm create %s -n %d:%d -s -i %s -b %s", name, nbNodesDC1, nbNodesDC2, IP_PREFIX,
-                CASSANDRA_VERSION);
+        bridge.execute("ccm create %s -n %d:%d -s -i %s -b %s", name, nbNodesDC1, nbNodesDC2,
+                IP_PREFIX, CASSANDRA_VERSION);
         return bridge;
     }
 
@@ -117,13 +119,14 @@ public class CCMBridge {
         return CCMCluster.create(nbNodes, builder);
     }
 
-    public static CCMBridge.CCMCluster buildCluster(int nbNodesDC1, int nbNodesDC2, Cluster.Builder builder) {
+    public static CCMBridge.CCMCluster buildCluster(int nbNodesDC1, int nbNodesDC2,
+            Cluster.Builder builder) {
         return CCMCluster.create(nbNodesDC1, nbNodesDC2, builder);
     }
-    
-    public static void setCassandraVersion(String cassandraVersion){
-    	CASSANDRA_VERSION = "-v " + cassandraVersion;		
-    	System.setProperty("cassandra.version", cassandraVersion);
+
+    public static void setCassandraVersion(String cassandraVersion) {
+        CASSANDRA_VERSION = "-v " + cassandraVersion;
+        System.setProperty("cassandra.version", cassandraVersion);
     }
 
     public void start() {
@@ -145,7 +148,8 @@ public class CCMBridge {
 
     public void start(int n, String option) {
         logger.info("Starting: " + IP_PREFIX + n + " with " + option);
-        execute("ccm node%d start --wait-other-notice --wait-for-binary-proto --jvm_arg=%s", n, option);
+        execute("ccm node%d start --wait-other-notice --wait-for-binary-proto --jvm_arg=%s", n,
+                option);
     }
 
     public void stop(int n) {
@@ -181,9 +185,12 @@ public class CCMBridge {
     }
 
     public void bootstrapNode(int n, String dc) {
-        if (dc == null) execute("ccm add node%d -i %s%d -j %d -r %d -b -s", n, IP_PREFIX, n, 7000 + 100 * n,
-                8000 + 100 * n);
-        else execute("ccm add node%d -i %s%d -j %d -b -d %s -s", n, IP_PREFIX, n, 7000 + 100 * n, dc);
+        if (dc == null)
+            execute("ccm add node%d -i %s%d -j %d -r %d -b -s", n, IP_PREFIX, n, 7000 + 100 * n,
+                    8000 + 100 * n);
+        else
+            execute("ccm add node%d -i %s%d -j %d -b -d %s -s", n, IP_PREFIX, n, 7000 + 100 * n,
+                    dc);
         execute("ccm node%d start --wait-other-notice --wait-for-binary-proto", n);
     }
 
@@ -201,8 +208,8 @@ public class CCMBridge {
 
     private void execute(String command, Object... args) {
         try {
-            //String fullCommand = String.format(command, args) + " --config-dir=" + ccmDir;
-        	String fullCommand = String.format(command, args) ;
+            // String fullCommand = String.format(command, args) + " --config-dir=" + ccmDir;
+            String fullCommand = String.format(command, args);
             if (System.getProperty("os.name").toLowerCase().startsWith("win")) {
                 // fix to start ccm on windows platform
                 fullCommand = "powershell -Command \"" + fullCommand + "\"";
@@ -212,8 +219,10 @@ public class CCMBridge {
             int retValue = p.waitFor();
 
             if (retValue != 0) {
-                BufferedReader outReader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                BufferedReader errReader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+                BufferedReader outReader = new BufferedReader(
+                        new InputStreamReader(p.getInputStream()));
+                BufferedReader errReader = new BufferedReader(
+                        new InputStreamReader(p.getErrorStream()));
 
                 String line = outReader.readLine();
                 while (line != null) {
@@ -236,8 +245,8 @@ public class CCMBridge {
 
     private void executeAndPrint(String command, Object... args) {
         try {
-            //String fullCommand = String.format(command, args) + " --config-dir=" + ccmDir;
-        	String fullCommand = String.format(command, args);
+            // String fullCommand = String.format(command, args) + " --config-dir=" + ccmDir;
+            String fullCommand = String.format(command, args);
             if (System.getProperty("os.name").toLowerCase().startsWith("win")) {
                 // fix to start ccm on windows platform
                 fullCommand = "powershell -Command \"" + fullCommand + "\"";
@@ -246,7 +255,8 @@ public class CCMBridge {
             Process p = runtime.exec(fullCommand, null, CASSANDRA_DIR);
             int retValue = p.waitFor();
 
-            BufferedReader outReaderOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader outReaderOutput = new BufferedReader(
+                    new InputStreamReader(p.getInputStream()));
             String line = outReaderOutput.readLine();
             while (line != null) {
                 System.out.println(line);
@@ -260,8 +270,8 @@ public class CCMBridge {
     }
 
     /**
-     * Waits for a host to be up by pinging the TCP socket directly, without
-     * using the Java driver's API.
+     * Waits for a host to be up by pinging the TCP socket directly, without using the Java driver's
+     * API.
      */
     public void waitForUp(int node) {
         try {
@@ -273,8 +283,8 @@ public class CCMBridge {
     }
 
     /**
-     * Waits for a host to be down by pinging the TCP socket directly, without
-     * using the Java driver's API.
+     * Waits for a host to be down by pinging the TCP socket directly, without using the Java
+     * driver's API.
      */
     public void waitForDown(int node) {
         try {
@@ -285,13 +295,15 @@ public class CCMBridge {
         }
     }
 
-    private static void busyWaitForPort(InetAddress address, int port, boolean expectedConnectionState) {
+    private static void busyWaitForPort(InetAddress address, int port,
+            boolean expectedConnectionState) {
         long maxAcceptableWaitTime = TimeUnit.SECONDS.toMillis(10);
         long waitQuantum = TimeUnit.MILLISECONDS.toMillis(500);
         long waitTimeSoFar = 0;
         boolean connectionState = !expectedConnectionState;
 
-        while (connectionState != expectedConnectionState && waitTimeSoFar < maxAcceptableWaitTime) {
+        while (connectionState != expectedConnectionState
+                && waitTimeSoFar < maxAcceptableWaitTime) {
             connectionState = CCMBridge.pingPort(address, port);
             try {
                 Thread.sleep(waitQuantum);
@@ -313,11 +325,12 @@ public class CCMBridge {
         } catch (IOException e) {
             logger.debug("Connection failed");
         } finally {
-            if (socket != null) try {
-                socket.close();
-            } catch (IOException e) {
-                logger.warn("Error closing socket to " + address);
-            }
+            if (socket != null)
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    logger.warn("Error closing socket to " + address);
+                }
         }
         return connectionSuccessful;
     }
@@ -366,17 +379,18 @@ public class CCMBridge {
 
         @AfterClass(groups = { "short", "long" })
         public static void discardCluster() {
-            if (cluster != null) cluster.close();
+            if (cluster != null)
+                cluster.close();
 
             if (cassandraCluster == null) {
                 logger.error("No cluster to discard");
             } else if (erroredOut) {
                 cassandraCluster.stop();
-                //logger.info("Error during tests, kept C* logs in " + cassandraCluster.ccmDir);
-                logger.info("Error during tests, kept C* logs" );
+                // logger.info("Error during tests, kept C* logs in " + cassandraCluster.ccmDir);
+                logger.info("Error during tests, kept C* logs");
             } else {
                 cassandraCluster.remove();
-                //cassandraCluster.ccmDir.delete();
+                // cassandraCluster.ccmDir.delete();
             }
         }
 
@@ -389,10 +403,12 @@ public class CCMBridge {
         public void maybeCreateSchema() {
 
             try {
-                if (schemaCreated) return;
+                if (schemaCreated)
+                    return;
 
                 try {
-                    session.execute(String.format(CREATE_KEYSPACE_SIMPLE_FORMAT, SIMPLE_KEYSPACE, 1));
+                    session.execute(
+                            String.format(CREATE_KEYSPACE_SIMPLE_FORMAT, SIMPLE_KEYSPACE, 1));
                 } catch (AlreadyExistsException e) {
                     // It's ok, ignore
                 }
@@ -425,18 +441,22 @@ public class CCMBridge {
         private boolean erroredOut;
 
         public static CCMCluster create(int nbNodes, Cluster.Builder builder) {
-            if (nbNodes == 0) throw new IllegalArgumentException();
+            if (nbNodes == 0)
+                throw new IllegalArgumentException();
 
             return new CCMCluster(CCMBridge.create("test", nbNodes), builder, nbNodes);
         }
 
         public static CCMCluster create(int nbNodesDC1, int nbNodesDC2, Cluster.Builder builder) {
-            if (nbNodesDC1 == 0) throw new IllegalArgumentException();
+            if (nbNodesDC1 == 0)
+                throw new IllegalArgumentException();
 
-            return new CCMCluster(CCMBridge.create("test", nbNodesDC1, nbNodesDC2), builder, nbNodesDC1 + nbNodesDC2);
+            return new CCMCluster(CCMBridge.create("test", nbNodesDC1, nbNodesDC2), builder,
+                    nbNodesDC1 + nbNodesDC2);
         }
 
-        public static CCMCluster create(CCMBridge cassandraCluster, Cluster.Builder builder, int totalNodes) {
+        public static CCMCluster create(CCMBridge cassandraCluster, Cluster.Builder builder,
+                int totalNodes) {
             return new CCMCluster(cassandraCluster, builder, totalNodes);
         }
 
@@ -467,7 +487,8 @@ public class CCMBridge {
         }
 
         public void discard() {
-            if (cluster != null) cluster.close();
+            if (cluster != null)
+                cluster.close();
 
             if (cassandraCluster == null) {
                 logger.error("No cluster to discard");
@@ -476,7 +497,7 @@ public class CCMBridge {
                 logger.info("Error during tests, kept C* logs");
             } else {
                 cassandraCluster.remove();
-                //cassandraCluster.ccmDir.delete();
+                // cassandraCluster.ccmDir.delete();
             }
         }
     }

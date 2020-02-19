@@ -18,9 +18,8 @@ import java.sql.Statement;
 
 import com.datastax.driver.core.ConsistencyLevel;
 
-public interface CassandraStatementExtras extends Statement
-{
+public interface CassandraStatementExtras extends Statement {
     public void setConsistencyLevel(ConsistencyLevel consistencyLevel);
-    
+
     public ConsistencyLevel getConsistencyLevel();
 }

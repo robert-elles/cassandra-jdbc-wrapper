@@ -48,8 +48,8 @@ import static com.github.adejanovski.cassandra.jdbc.Utils.*;
 /**
  * Holds a {@link Session} shared among multiple {@link CassandraConnection} objects.
  *
- * This class uses reference counting to track if active CassandraConnections still use
- * the Session. When the last CassandraConnection has closed, the Session gets closed.
+ * This class uses reference counting to track if active CassandraConnections still use the Session.
+ * When the last CassandraConnection has closed, the Session gets closed.
  */
 class SessionHolder {
     private static final Logger logger = LoggerFactory.getLogger(SessionHolder.class);
@@ -62,7 +62,8 @@ class SessionHolder {
     final Session session;
     final Properties properties;
 
-    SessionHolder(Map<String, String> params, LoadingCache<Map<String, String>, SessionHolder> parentCache) throws SQLException {
+    SessionHolder(Map<String, String> params,
+            LoadingCache<Map<String, String>, SessionHolder> parentCache) throws SQLException {
         this.cacheKey = params;
         this.parentCache = parentCache;
 
@@ -110,19 +111,21 @@ class SessionHolder {
         while (true) {
             int ref = references.get();
             if (ref < 0) {
-                // We raced with the release of the last reference, the caller will need to create a new session
+                // We raced with the release of the last reference, the caller will need to create a
+                // new session
                 logger.debug("Failed to acquire reference to {}", cacheKey.get(URL_KEY));
                 return false;
             }
             if (references.compareAndSet(ref, ref + 1)) {
-                logger.debug("Acquired reference to {}, new count = {}", cacheKey.get(URL_KEY), ref + 1);
+                logger.debug("Acquired reference to {}, new count = {}", cacheKey.get(URL_KEY),
+                        ref + 1);
                 return true;
             }
         }
     }
 
     @SuppressWarnings("resource")
-	private Session createSession(Properties properties) throws SQLException {
+    private Session createSession(Properties properties) throws SQLException {
         String hosts = properties.getProperty(TAG_SERVER_NAME);
         int port = Integer.parseInt(properties.getProperty(TAG_PORT_NUMBER));
         String keyspace = properties.getProperty(TAG_DATABASE_NAME);
@@ -133,7 +136,6 @@ class SessionHolder {
         String reconnectPolicy = properties.getProperty(TAG_RECONNECT_POLICY, "");
         boolean debugMode = properties.getProperty(TAG_DEBUG, "").equals("true");
 
-
         Cluster.Builder builder = Cluster.builder();
         builder.addContactPoints(hosts.split("--")).withPort(port);
         builder.withSocketOptions(new SocketOptions().setKeepAlive(true));
@@ -143,58 +145,64 @@ class SessionHolder {
         }
 
         if (loadBalancingPolicy.length() > 0) {
-            // if load balancing policy has been given in the JDBC URL, parse it and add it to the cluster builder
+            // if load balancing policy has been given in the JDBC URL, parse it and add it to the
+            // cluster builder
             try {
                 builder.withLoadBalancingPolicy(Utils.parseLbPolicy(loadBalancingPolicy));
             } catch (Exception e) {
                 if (debugMode) {
                     throw new SQLNonTransientConnectionException(e);
                 }
-                logger.warn("Error occured while parsing load balancing policy :" + e.getMessage() + " / Forcing to TokenAwarePolicy...");
+                logger.warn("Error occured while parsing load balancing policy :" + e.getMessage()
+                        + " / Forcing to TokenAwarePolicy...");
                 builder.withLoadBalancingPolicy(new TokenAwarePolicy(new RoundRobinPolicy()));
             }
         }
 
         if (retryPolicy.length() > 0) {
-            // if retry policy has been given in the JDBC URL, parse it and add it to the cluster builder
+            // if retry policy has been given in the JDBC URL, parse it and add it to the cluster
+            // builder
             try {
                 builder.withRetryPolicy(Utils.parseRetryPolicy(retryPolicy));
             } catch (Exception e) {
                 if (debugMode) {
                     throw new SQLNonTransientConnectionException(e);
                 }
-                logger.warn("Error occured while parsing retry policy :" + e.getMessage() + " / skipping...");
+                logger.warn("Error occured while parsing retry policy :" + e.getMessage()
+                        + " / skipping...");
             }
         }
 
         if (reconnectPolicy.length() > 0) {
-            // if reconnection policy has been given in the JDBC URL, parse it and add it to the cluster builder
+            // if reconnection policy has been given in the JDBC URL, parse it and add it to the
+            // cluster builder
             try {
                 builder.withReconnectionPolicy(Utils.parseReconnectionPolicy(reconnectPolicy));
             } catch (Exception e) {
                 if (debugMode) {
                     throw new SQLNonTransientConnectionException(e);
                 }
-                logger.warn("Error occured while parsing reconnection policy :" + e.getMessage() + " / skipping...");
+                logger.warn("Error occured while parsing reconnection policy :" + e.getMessage()
+                        + " / skipping...");
             }
         }
 
         // Declare and register codecs
         List<TypeCodec<?>> codecs = new ArrayList<TypeCodec<?>>();
         CodecRegistry customizedRegistry = new CodecRegistry();
-        
+
         codecs.add(new TimestampToLongCodec(Long.class));
         codecs.add(new LongToIntCodec(Integer.class));
         codecs.add(new IntToLongCodec(Long.class));
         codecs.add(new BigDecimalToBigintCodec(BigDecimal.class));
         codecs.add(new DoubleToDecimalCodec(Double.class));
         codecs.add(new DoubleToFloatCodec(Double.class));
-        
+
         customizedRegistry.register(codecs);
-        
+
         builder.withCodecRegistry(customizedRegistry);
         // end of codec register
-        
+
         Cluster cluster = null;
         try {
             cluster = builder.build();
@@ -207,7 +215,8 @@ class SessionHolder {
     }
 
     private void dispose() {
-        // No one else has a reference to the parent Cluster, and only one Session was created from it:
+        // No one else has a reference to the parent Cluster, and only one Session was created from
+        // it:
         session.getCluster().close();
         parentCache.invalidate(cacheKey);
     }

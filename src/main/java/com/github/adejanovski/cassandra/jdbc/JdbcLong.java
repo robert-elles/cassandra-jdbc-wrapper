@@ -17,81 +17,64 @@ package com.github.adejanovski.cassandra.jdbc;
 import java.nio.ByteBuffer;
 import java.sql.Types;
 
-
-public class JdbcLong extends AbstractJdbcType<Long>
-{
+public class JdbcLong extends AbstractJdbcType<Long> {
     public static final JdbcLong instance = new JdbcLong();
 
-    JdbcLong()
-    {
+    JdbcLong() {
     }
 
-    public boolean isCaseSensitive()
-    {
+    public boolean isCaseSensitive() {
         return false;
     }
 
-    public int getScale(Long obj)
-    {
+    public int getScale(Long obj) {
         return 0;
     }
 
-    public int getPrecision(Long obj)
-    {
+    public int getPrecision(Long obj) {
         return obj.toString().length();
     }
 
-    public boolean isCurrency()
-    {
+    public boolean isCurrency() {
         return false;
     }
 
-    public boolean isSigned()
-    {
+    public boolean isSigned() {
         return true;
     }
 
-    public String toString(Long obj)
-    {
+    public String toString(Long obj) {
         return obj.toString();
     }
 
-    public boolean needsQuotes()
-    {
+    public boolean needsQuotes() {
         return false;
     }
 
-    public String getString(ByteBuffer bytes)
-    {
-        if (bytes.remaining() == 0)
-        {
+    public String getString(ByteBuffer bytes) {
+        if (bytes.remaining() == 0) {
             return "";
         }
-        if (bytes.remaining() != 8)
-        {
+        if (bytes.remaining() != 8) {
             throw new MarshalException("A long is exactly 8 bytes: " + bytes.remaining());
         }
 
         return String.valueOf(bytes.getLong(bytes.position()));
     }
 
-    public Class<Long> getType()
-    {
+    public Class<Long> getType() {
         return Long.class;
     }
 
-    public int getJdbcType()
-    {
+    public int getJdbcType() {
         return Types.BIGINT;
     }
 
-    public Long compose(Object obj)
-    {
-        return (Long)obj;
+    public Long compose(Object obj) {
+        return (Long) obj;
     }
 
-    public Object decompose(Long value)
-    {
-        return (Object)value;
+    public Object decompose(Long value) {
+        return (Object) value;
     }
 }

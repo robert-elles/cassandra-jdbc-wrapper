@@ -14,7 +14,6 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,26 +21,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface CassandraResultSetExtras extends ResultSet
-{
+public interface CassandraResultSetExtras extends ResultSet {
     /**
-     * @return the current row key    
+     * @return the current row key
      * @throws SQLException
      */
-    public byte[] getKey()throws SQLException;;
-    
+    public byte[] getKey() throws SQLException;;
+
     public BigInteger getBigInteger(int i) throws SQLException;
+
     public BigInteger getBigInteger(String name) throws SQLException;
-    
+
     public List<?> getList(int index) throws SQLException;
+
     public List<?> getList(String name) throws SQLException;
 
     public Set<?> getSet(int index) throws SQLException;
+
     public Set<?> getSet(String name) throws SQLException;
 
-    public Map<?,?> getMap(int index) throws SQLException;
-    public Map<?,?> getMap(String name) throws SQLException;
+    public Map<?, ?> getMap(int index) throws SQLException;
 
-
+    public Map<?, ?> getMap(String name) throws SQLException;
 
 }
