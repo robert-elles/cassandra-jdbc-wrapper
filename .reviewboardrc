@@ -1,0 +1,5 @@
+REVIEWBOARD_URL = "https://rbcommons.com/s/snaplogic"
+REPOSITORY = "Snaplogic/cassandra-jdbc-wrapper"
+REPOSITORY_TYPE = "git"
+BRANCH = "develop"
+LAND_DEST_BRANCH = "develop"
