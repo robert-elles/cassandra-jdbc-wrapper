@@ -4,6 +4,46 @@ Cassandra JDBC wrapper for the Datastax Java Driver
 This is the jdbc wrapper of the DataStax Java Driver for Apache Cassandra (C*),
 which offers a simple JDBC compliant API to work with CQL3.
 
+SnapLogic Enhancements
+----------------------
+
+SnapLogic has forked this project to support the new Cassandra
+datatypes introduced in API 4.x and 5.x:
+
+API 4.x:
+* Date
+* Time
+* SmallInt (short)
+* TinyInt (byte)
+
+API 5.x:
+* Duration
+
+Other changes:
+
+* We have cleaned up the existing implementation of the temporal
+types at the cost of breaking existing functionality - the existing
+code implements the Date and Time datatypes using the existing
+Timestamp datatype. This code properly implements Date and Time
+but due to our business needs does not make any effort to support
+backwards compatibility for Dates and Times implemented as Timestamps.
+In many cases this can be worked around using a 'SELECT INTO' a
+new table with the required conversions of the temporal types.
+
+* We have changed many of the methods to return a null value instead
+of an empty string.
+
+* We have added significantly more null-value checking. In some
+cases the methods should never be called with null values but it
+doesn't hurt to be safe.
+
+Branches:
+
+* master: tracks adejanovski/cassandra-jdbc-wrapper:master
+* develop: tracks SnapLogic enhancements
+
+Everything that follows this point is unchanged from the upstream
+project.
 
 Features
 --------
