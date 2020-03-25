@@ -1,3 +1,4 @@
 language: java
 dist: xenial
 jdk: openjdk8
+script: mvn package -DskipTests
