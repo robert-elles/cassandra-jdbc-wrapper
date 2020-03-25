@@ -44,13 +44,16 @@ import com.datastax.driver.core.TypeCodec;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
+import com.google.common.cache.LoadingCache;
+
 import com.github.adejanovski.cassandra.jdbc.codec.BigDecimalToBigintCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.DoubleToDecimalCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.DoubleToFloatCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.IntToLongCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.LongToIntCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.TimestampToLongCodec;
-import com.google.common.cache.LoadingCache;
+
+import static com.github.adejanovski.cassandra.jdbc.Utils.*;
 
 /**
  * Holds a {@link Session} shared among multiple {@link CassandraConnection} objects.
@@ -194,6 +197,13 @@ class SessionHolder {
             }
         }
 
+        // The codecs below were defined in the original code. We probably
+        // don't need all of them, however, a couple are necessary to run the
+        // tests, specifically these:
+        //
+        // NumericTypesUnitTest.testDecimalType [bigint <-> java.lang.Integer]
+        // JdbcRegressionUnitTest.testTimestampToLongCodec [timestamp <-> java.lang.Long]
+
         // Declare and register codecs
         List<TypeCodec<?>> codecs = new ArrayList<TypeCodec<?>>();
         CodecRegistry customizedRegistry = new CodecRegistry();
@@ -206,7 +216,6 @@ class SessionHolder {
         codecs.add(new DoubleToFloatCodec(Double.class));
 
         customizedRegistry.register(codecs);
-
         builder.withCodecRegistry(customizedRegistry);
         // end of codec register
 

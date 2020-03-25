@@ -31,18 +31,21 @@ public class ConnectionUnitTest {
     private static int PORT = Integer
             .parseInt(System.getProperty("port", ConnectionDetails.getPort() + ""));
     private static final String KEYSPACE = "system";
+
+    // data-center instance name ($ ccm node1 ring)
+    private static final String DATACENTER = "datacenter1";
+
     // private static final String CQLV3 = "3.0.0";
-    private static final String CONSISTENCY_QUORUM = "QUORUM";
+    // private static final String CONSISTENCY_QUORUM = "QUORUM";
 
     private static java.sql.Connection con = null;
 
+    @SuppressWarnings("unused")
     private static CCMBridge ccmBridge = null;
     private static boolean suiteLaunch = true;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        /* System.setProperty("cassandra.version", "2.1.2"); */
-
         if (BuildCluster.HOST.equals(System.getProperty("host", ConnectionDetails.getHost()))) {
             BuildCluster.setUpBeforeSuite();
             suiteLaunch = false;
@@ -79,18 +82,24 @@ public class ConnectionUnitTest {
                 KEYSPACE + "?debug=true&loadbalancing=TokenAwarePolicy(RoundRobinPolicy())"));
         con.close();
 
-        System.out.println("Connecting to : " + String.format("jdbc:cassandra://%s:%d/%s", HOST,
-                PORT, KEYSPACE + "?debug=true&loadbalancing=DCAwareRoundRobinPolicy(\"dc1\")"));
-        con = DriverManager.getConnection(String.format("jdbc:cassandra://%s:%d/%s", HOST, PORT,
-                KEYSPACE + "?debug=true&loadbalancing=DCAwareRoundRobinPolicy(\"dc1\")"));
+        System.out.println("Connecting to : " + String.format(
+            "jdbc:cassandra://%s:%d/%s?debug=true&loadbalancing=DCAwareRoundRobinPolicy('%s')",
+            HOST, PORT, KEYSPACE, DATACENTER));
+
+        con = DriverManager.getConnection(String.format(
+            "jdbc:cassandra://%s:%d/%s?debug=true&loadbalancing=DCAwareRoundRobinPolicy('%s')",
+            HOST, PORT, KEYSPACE, DATACENTER));
+
         con.close();
 
-        System.out.println(
-                "Connecting to : " + String.format("jdbc:cassandra://%s:%d/%s", HOST, PORT, KEYSPACE
-                        + "?debug=true&loadbalancing=TokenAwarePolicy(DCAwareRoundRobinPolicy('dc1'))"));
-        con = DriverManager
-                .getConnection(String.format("jdbc:cassandra://%s:%d/%s", HOST, PORT, KEYSPACE
-                        + "?debug=true&loadbalancing=TokenAwarePolicy(DCAwareRoundRobinPolicy('dc1'))"));
+        System.out.println( "Connecting to : " + String.format(
+            "jdbc:cassandra://%s:%d/%s?debug=true&loadbalancing=TokenAwarePolicy(DCAwareRoundRobinPolicy('%s'))",
+            HOST, PORT, KEYSPACE, DATACENTER));
+
+        con = DriverManager.getConnection(String.format(
+            "jdbc:cassandra://%s:%d/%s?debug=true&loadbalancing=TokenAwarePolicy(DCAwareRoundRobinPolicy('%s'))",
+            HOST, PORT, KEYSPACE, DATACENTER));
+
         con.close();
 
         System.out.println(
