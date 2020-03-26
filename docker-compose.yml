@@ -1,0 +1,26 @@
+#
+# Single-node cassandra server
+#
+---
+version: '3.5'
+
+services:
+  cassandra:
+    image: cassandra:3.11
+    container_name: cassandra
+    ports:
+      - 7199:7199
+      - 9042:9042
+      - 9160:9160
+    #volumes:
+      #- ./datadir:/var/lib/cassandra
+    restart: unless-stopped
+    environment:
+      CASSANDRA_START_RPC: "true"
+    # logging:
+    #   driver: syslog
+    #   options:
+    #     syslog-address: "udp://syslog:514"
+    #     syslog-facility: local3
+    #     tag: cassandra
+    #     labels: cassandra

@@ -1,4 +1,27 @@
 language: java
 dist: xenial
-jdk: openjdk8
-script: mvn package -DskipTests
+sudo: required
+
+services:
+  - docker
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.24.1
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+jdk:
+  - openjdk8
+
+before_script:
+  - docker-compose up -d --build
+
+script:
+  - mvn package
+
+after_script:
+  - docker-compose down
