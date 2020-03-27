@@ -30,8 +30,9 @@ before_script:
 
 script:
   - "travis_wait 2 sleep 120 &"
-  - "docker ps &"
-  - "docker logs cassandra &"
+  - docker ps
+  - docker logs cassandra
+  - sudo netstat -plnt
   - mvn package
 
 after_script:
