@@ -27,12 +27,12 @@ jdk:
 
 before_script:
   - docker-compose up -d --build
-
-script:
   - "travis_wait 2 sleep 120 &"
   - docker ps
   - docker logs cassandra
   - sudo netstat -plnt
+
+script:
   - mvn package
 
 after_script:
