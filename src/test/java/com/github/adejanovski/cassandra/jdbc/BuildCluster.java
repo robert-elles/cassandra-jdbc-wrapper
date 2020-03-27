@@ -17,7 +17,7 @@ import com.datastax.driver.core.Session;
 public class BuildCluster {
 
     @SuppressWarnings("unused")
-    private final static Logger logger = LoggerFactory.getLogger(BuildCluster.class);
+    private final static Logger LOG = LoggerFactory.getLogger(BuildCluster.class);
 
     public static String HOST = System.getProperty("host", ConnectionDetails.getHost());
     public static CCMBridge ccmBridge = null;
@@ -74,6 +74,7 @@ public class BuildCluster {
             session = cluster.connect();
             return true;
         } catch (Exception e) {
+            if (LOG.isDebugEnabled()) LOG.debug("problem building cluster", e);
             return false;
         }
 
