@@ -1,5 +1,5 @@
 language: java
-#dist: trusty
+# ubuntu 18.04
 dist: bionic
 sudo: required
 
@@ -10,13 +10,6 @@ env:
   DOCKER_COMPOSE_VERSION: 1.24.1
 
 before_install:
-  - sudo apt -y update
-  - sudo apt -y install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-  - sudo apt remove docker docker-engine docker.io containerd runc
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt update
-  - sudo apt -y install docker-ce docker-ce-cli containerd.io
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
@@ -27,7 +20,7 @@ jdk:
 
 before_script:
   - docker-compose up -d --build
-  - travis_wait 2 sleep 120
+  - travis_wait 1 sleep 60
   - docker ps
   - docker logs cassandra
   - sudo netstat -plnt
