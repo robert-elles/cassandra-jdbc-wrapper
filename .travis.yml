@@ -26,7 +26,8 @@ before_script:
   - sudo netstat -plnt
 
 script:
-  - mvn package
+  - if [ "$TRAVIS_BRANCH" = "develop" ]; then mvn deploy; fi
+  - if [ "$TRAVIS_BRANCH" != "develop" ]; then mvn package; fi
 
 after_script:
   - docker-compose down
