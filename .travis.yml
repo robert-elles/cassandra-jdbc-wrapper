@@ -29,7 +29,7 @@ before_script:
   - docker-compose up -d --build
 
 script:
-  - "travis_wait 1 sleep 60 &"
+  - "travis_wait 2 sleep 120 &"
   - mvn package
 
 after_script:
