@@ -41,7 +41,8 @@
 		<project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sourceReleaseAssemblyDescriptor>source-release</sourceReleaseAssemblyDescriptor>
-		<cassandra.version>2.1.9</cassandra.version>
+		<!--<cassandra.version>2.1.9</cassandra.version>-->
+		<cassandra.version>3.11</cassandra.version>
 		<gpg.useagent>true</gpg.useagent>
 		<cassandra.host>localhost</cassandra.host>
 		<datastax.java.driver.version>3.7.0</datastax.java.driver.version>
