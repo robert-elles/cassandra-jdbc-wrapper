@@ -18,6 +18,10 @@ before_install:
 jdk:
   - openjdk8
 
+cache:
+  directories:
+  - "$HOME/.m2"
+
 before_script:
   - docker-compose up -d --build
   - travis_wait 1 sleep 60
@@ -26,7 +30,7 @@ before_script:
   - sudo netstat -plnt
 
 script:
-  - if [ "$TRAVIS_BRANCH" = "develop" ]; then "cp ./.travis.settings.xml $HOME/.m2/settings.xml && mvn deploy"; fi
+  - if [ "$TRAVIS_BRANCH" = "develop" ]; then "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy"; fi
   - if [ "$TRAVIS_BRANCH" != "develop" ]; then mvn package; fi
 
 after_script:
