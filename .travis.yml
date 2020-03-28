@@ -30,8 +30,11 @@ before_script:
   - sudo netstat -plnt
 
 script:
-  - if [ "$TRAVIS_BRANCH" = "develop" ]; then cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy; fi
-  - if [ "$TRAVIS_BRANCH" != "develop" ]; then mvn package; fi
+  - if [ "$TRAVIS_BRANCH" = "develop" ]; then 
+        cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy;
+    else
+        mvn package;
+    fi
 
 after_script:
   - docker-compose down
