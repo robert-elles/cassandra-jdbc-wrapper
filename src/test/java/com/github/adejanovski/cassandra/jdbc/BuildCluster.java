@@ -50,17 +50,17 @@ public class BuildCluster {
 
     @AfterSuite(groups = { "init" })
     public static void tearDownAfterSuite() throws Exception {
-        System.out.println("CLOSING CASSANDRA CONNECTION");
+        LOG.debug("CLOSING CASSANDRA CONNECTION");
         if (dynamicCluster) {
-            System.out.println("Stopping nodes");
+            LOG.debug("Stopping nodes");
             clusterHasBuilt = false;
             try {
                 ccmBridge.forceStop();
-                System.out.println("Discarding cluster");
+                LOG.debug("Discarding cluster");
                 ccmBridge.remove();
                 HOST = System.getProperty("host", ConnectionDetails.getHost());
             } catch (Exception e) {
-                System.out.println("Silent error discarding cluster");
+                LOG.debug("Silent error discarding cluster");
             }
         }
     }
@@ -74,7 +74,9 @@ public class BuildCluster {
             session = cluster.connect();
             return true;
         } catch (Exception e) {
-            if (LOG.isDebugEnabled()) LOG.debug("problem building cluster", e);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("problem building cluster", e);
+            }
             return false;
         }
 
