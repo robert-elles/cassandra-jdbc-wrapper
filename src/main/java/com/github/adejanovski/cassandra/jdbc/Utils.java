@@ -91,6 +91,14 @@ public class Utils {
     public static final String KEY_RETRY_POLICY = "retry";
     public static final String KEY_RECONNECT_POLICY = "reconnection";
     public static final String KEY_DEBUG = "debug";
+    public static final String KEY_SSL_ENABLED = "sslenabled";
+    public static final String KEY_VERIFY_SERVER_CERTIFICATE = "verifyservercertificate";
+    public static final String KEY_STORE_URL = "keyStore";
+    public static final String KEY_STORE_PASSWORD = "keyStorePassword";
+    public static final String KEY_STORE_FACTORY = "keyStoreFactory";
+    public static final String TRUST_STORE_URL = "trustStore";
+    public static final String KEY_ALIAS = "keyAlias";
+    public static final String PRIVATE_KEY_PASSPHRASE = "privateKeyPassphrase";
     // public static final String KEY_PRIMARY_DC = "primarydc";
 
     public static final String TAG_DESCRIPTION = "description";
@@ -108,6 +116,8 @@ public class Utils {
     public static final String TAG_RETRY_POLICY = "retry";
     public static final String TAG_RECONNECT_POLICY = "reconnection";
     public static final String TAG_DEBUG = "debug";
+    public static final String TAG_SSL_ENABLED = "sslenabled";
+    public static final String TAG_VERIFY_SERVER_CERTIFICATE = "verifyServerCertificate";
 
     public static final String TAG_PRIMARY_DC = "primaryDatacenter";
     public static final String TAG_BACKUP_DC = "backupDatacenter";
@@ -250,6 +260,12 @@ public class Utils {
                 }
                 if (params.containsKey(KEY_RECONNECT_POLICY)) {
                     props.setProperty(TAG_RECONNECT_POLICY, params.get(KEY_RECONNECT_POLICY));
+                }
+                if (params.containsKey(KEY_VERIFY_SERVER_CERTIFICATE.toLowerCase())) {
+                    props.setProperty(KEY_VERIFY_SERVER_CERTIFICATE.toLowerCase(), params.get(KEY_VERIFY_SERVER_CERTIFICATE));
+                }
+                if (params.containsKey(KEY_SSL_ENABLED)) {
+                    props.setProperty(KEY_SSL_ENABLED, params.get(KEY_SSL_ENABLED));
                 }
 
             }

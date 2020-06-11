@@ -14,63 +14,61 @@
  */
 package com.github.adejanovski.cassandra.jdbc;
 
-import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_DATABASE_NAME;
-import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_DEBUG;
-import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_LOADBALANCING_POLICY;
-import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_PASSWORD;
-import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_PORT_NUMBER;
-import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_RECONNECT_POLICY;
-import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_RETRY_POLICY;
-import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_SERVER_NAME;
-import static com.github.adejanovski.cassandra.jdbc.Utils.TAG_USER;
-
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.sql.SQLNonTransientConnectionException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.CodecRegistry;
+import com.datastax.driver.core.RemoteEndpointAwareJdkSSLOptions;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
+import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.TypeCodec;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
-import com.google.common.cache.LoadingCache;
-
 import com.github.adejanovski.cassandra.jdbc.codec.BigDecimalToBigintCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.DoubleToDecimalCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.DoubleToFloatCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.IntToLongCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.LongToIntCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.TimestampToLongCodec;
+import com.google.common.cache.LoadingCache;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.SSLContext;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.KeyStore;
+import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.adejanovski.cassandra.jdbc.Utils.*;
 
 /**
  * Holds a {@link Session} shared among multiple {@link CassandraConnection} objects.
- *
- * This class uses reference counting to track if active CassandraConnections still use the Session.
- * When the last CassandraConnection has closed, the Session gets closed.
+ * <p>
+ * This class uses reference counting to track if active CassandraConnections still use the
+ * Session. When the last CassandraConnection has closed, the Session gets closed.
  */
 class SessionHolder {
+
     private static final Logger logger = LoggerFactory.getLogger(SessionHolder.class);
-    static final String URL_KEY = "jdbcUrl";
-
-    private final LoadingCache<Map<String, String>, SessionHolder> parentCache;
-    private final Map<String, String> cacheKey;
-
-    private final AtomicInteger references = new AtomicInteger();
     final Session session;
     final Properties properties;
+    private final LoadingCache<Map<String, String>, SessionHolder> parentCache;
+    private final Map<String, String> cacheKey;
+    private final AtomicInteger references = new AtomicInteger();
+    static final String URL_KEY = "jdbcUrl";
 
     SessionHolder(Map<String, String> params,
             LoadingCache<Map<String, String>, SessionHolder> parentCache) throws SQLException {
@@ -94,7 +92,9 @@ class SessionHolder {
         session = createSession(properties);
     }
 
-    /** Indicates that a CassandraConnection has closed and stopped using this object. */
+    /**
+     * Indicates that a CassandraConnection has closed and stopped using this object.
+     */
     void release() {
         int newRef;
         while (true) {
@@ -121,8 +121,8 @@ class SessionHolder {
         while (true) {
             int ref = references.get();
             if (ref < 0) {
-                // We raced with the release of the last reference, the caller will need to create a
-                // new session
+                // We raced with the release of the last reference, the caller will need to create
+                // a new session
                 logger.debug("Failed to acquire reference to {}", cacheKey.get(URL_KEY));
                 return false;
             }
@@ -145,10 +145,67 @@ class SessionHolder {
         String retryPolicy = properties.getProperty(TAG_RETRY_POLICY, "");
         String reconnectPolicy = properties.getProperty(TAG_RECONNECT_POLICY, "");
         boolean debugMode = properties.getProperty(TAG_DEBUG, "").equals("true");
+        // SSL Options
+        String sslEnabledOption = properties.getProperty(TAG_SSL_ENABLED, "false");
+        boolean sslEnabled = isTrue(sslEnabledOption);
+        String verifyServerCertificateOption = properties.getProperty(TAG_VERIFY_SERVER_CERTIFICATE.
+                toLowerCase(), "false");
+        boolean verifyServerCertificate = isTrue(verifyServerCertificateOption);
 
         Cluster.Builder builder = Cluster.builder();
         builder.addContactPoints(hosts.split("--")).withPort(port);
-        builder.withSocketOptions(new SocketOptions().setKeepAlive(true));
+        if (sslEnabled && verifyServerCertificate) {
+            String keyStorePassword = properties.getProperty(KEY_STORE_PASSWORD, "");
+            String keyStoreUrl = properties.getProperty(KEY_STORE_URL, "");
+            String keyStoreFactory = properties.getProperty(KEY_STORE_FACTORY, "");
+            String trustStoreUrl = properties.getProperty(TRUST_STORE_URL, "");
+            String privateKeyAlias = properties.getProperty(KEY_ALIAS, "");
+            String privateKeyPassPhrase = properties.getProperty(PRIVATE_KEY_PASSPHRASE, "");
+            KeyStore keyStore = null;
+            KeyStore trustStore = null;
+            //Condition to check for custom Key Store Factory to Generate Key/Trust stores
+            if (!StringUtils.isEmpty(keyStoreFactory)) {
+                try {
+                    Class factory = Class.forName(keyStoreFactory);
+                    Method getKeyStoreMethod = factory.getDeclaredMethod(
+                            "getKeyStore", Properties.class);
+                    keyStore = (KeyStore) getKeyStoreMethod.invoke(null, properties);
+
+                    Method getTrustStoreMethod = factory.getDeclaredMethod(
+                            "getTrustStore", Properties.class);
+                    trustStore = (KeyStore) getTrustStoreMethod.invoke(null, properties);
+                } catch (ClassNotFoundException | NoSuchMethodException |
+                        IllegalAccessException | InvocationTargetException e) {
+                    //ignore this and proceed
+                    logger.warn("Error while creating Key/Trust store ", e);
+                    keyStore = null;
+                    trustStore = null;
+                }
+            }
+            SSLContext context = null;
+            if (keyStore != null && trustStore != null) {
+                context = SSLUtil.getSSLContextFromKeyStore(keyStore, trustStore, privateKeyAlias,
+                        privateKeyPassPhrase);
+            } else {
+                // check keyStoreUrl
+                if (!StringUtils.isEmpty(keyStoreUrl)) {
+                    try {
+                        new URL(keyStoreUrl);
+                    } catch (MalformedURLException e) {
+                        keyStoreUrl = "file:" + keyStoreUrl;
+                    }
+                }
+                context = SSLUtil.getTrustEverybodySSLContext(keyStoreUrl, privateKeyAlias,
+                        privateKeyPassPhrase, keyStorePassword, trustStoreUrl);
+            }
+
+            SSLOptions options = RemoteEndpointAwareJdkSSLOptions.builder().withSSLContext(context)
+                    .build();
+            builder.withSSL(options);
+
+        } else {
+            builder.withSocketOptions(new SocketOptions().setKeepAlive(true));
+        }
         // Set credentials when applicable
         if (username.length() > 0) {
             builder.withCredentials(username, password);
@@ -158,12 +215,12 @@ class SessionHolder {
             // if load balancing policy has been given in the JDBC URL, parse it and add it to the
             // cluster builder
             try {
-                builder.withLoadBalancingPolicy(Utils.parseLbPolicy(loadBalancingPolicy));
+                builder.withLoadBalancingPolicy(parseLbPolicy(loadBalancingPolicy));
             } catch (Exception e) {
                 if (debugMode) {
                     throw new SQLNonTransientConnectionException(e);
                 }
-                logger.warn("Error occured while parsing load balancing policy :" + e.getMessage()
+                logger.warn("Error occurred while parsing load balancing policy :" + e.getMessage()
                         + " / Forcing to TokenAwarePolicy...");
                 builder.withLoadBalancingPolicy(new TokenAwarePolicy(new RoundRobinPolicy()));
             }
@@ -173,7 +230,7 @@ class SessionHolder {
             // if retry policy has been given in the JDBC URL, parse it and add it to the cluster
             // builder
             try {
-                builder.withRetryPolicy(Utils.parseRetryPolicy(retryPolicy));
+                builder.withRetryPolicy(parseRetryPolicy(retryPolicy));
             } catch (Exception e) {
                 if (debugMode) {
                     throw new SQLNonTransientConnectionException(e);
@@ -187,7 +244,7 @@ class SessionHolder {
             // if reconnection policy has been given in the JDBC URL, parse it and add it to the
             // cluster builder
             try {
-                builder.withReconnectionPolicy(Utils.parseReconnectionPolicy(reconnectPolicy));
+                builder.withReconnectionPolicy(parseReconnectionPolicy(reconnectPolicy));
             } catch (Exception e) {
                 if (debugMode) {
                     throw new SQLNonTransientConnectionException(e);
@@ -235,5 +292,10 @@ class SessionHolder {
         // it:
         session.getCluster().close();
         parentCache.invalidate(cacheKey);
+    }
+
+    private boolean isTrue(String value) {
+        return value != null && (value.equals("1") || value.toLowerCase(Locale.ENGLISH)
+                .equals("true"));
     }
 }
