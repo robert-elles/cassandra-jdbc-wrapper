@@ -470,14 +470,21 @@ class CassandraMetadataResultSet extends AbstractResultSet implements CassandraR
 
     public int getInt(int index) throws SQLException {
         checkIndex(index);
-        return currentRow.getInt(index - 1);
+        try {
+            return currentRow.getInt(index - 1);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
 
     }
 
     public int getInt(String name) throws SQLException {
         checkName(name);
-
-        return currentRow.getInt(name);
+        try {
+            return currentRow.getInt(name);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     public byte[] getKey() throws SQLException {

@@ -4,6 +4,13 @@ Cassandra JDBC wrapper for the Datastax Java Driver
 This is the jdbc wrapper of the DataStax Java Driver for Apache Cassandra (C*),
 which offers a simple JDBC compliant API to work with CQL3.
 
+
+Quick Build
+----------------------
+
+run: mvn clean package -Dmaven.test.skip=true
+
+
 SnapLogic Enhancements
 ----------------------
 
