@@ -28,7 +28,9 @@ import com.github.adejanovski.cassandra.jdbc.codec.BigDecimalToBigintCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.DoubleToDecimalCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.DoubleToFloatCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.IntToLongCodec;
+import com.github.adejanovski.cassandra.jdbc.codec.ListCustomTypeCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.LongToIntCodec;
+import com.github.adejanovski.cassandra.jdbc.codec.UdtTypeCodec;
 import com.github.adejanovski.cassandra.jdbc.codec.TimestampToLongCodec;
 import com.google.common.cache.LoadingCache;
 
@@ -271,6 +273,9 @@ class SessionHolder {
         codecs.add(new BigDecimalToBigintCodec(BigDecimal.class));
         codecs.add(new DoubleToDecimalCodec(Double.class));
         codecs.add(new DoubleToFloatCodec(Double.class));
+        codecs.add(new UdtTypeCodec());
+        codecs.add(TypeCodec.list(new UdtTypeCodec()));
+        codecs.add(new ListCustomTypeCodec());
 
         customizedRegistry.register(codecs);
         builder.withCodecRegistry(customizedRegistry);
