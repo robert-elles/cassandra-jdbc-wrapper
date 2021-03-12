@@ -6,8 +6,8 @@
   <name>Cassandra JDBC Wrapper</name>
   <version>3.7.3</version>
   <description>JDBC wrapper for the DataStax CQL Java Driver. The version number
-		matches the required version number of the datastax jars. Do not
-		mix them - you'll get ClassNotFoundExceptions if you do!</description>
+    matches the required version number of the datastax jars. Do not
+    mix them - you'll get ClassNotFoundExceptions if you do!</description>
   <url>https://github.com/adejanovski/cassandra-jdbc-wrapper</url>
   <inceptionYear>2015</inceptionYear>
   <developers>
@@ -26,11 +26,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <scm>
-    <connection>scm:git:git@github.com:adejanovski/cassandra-jdbc-wrapper.git</connection>
-    <developerConnection>scm:git:git@github.com:adejanovski/cassandra-jdbc-wrapper.git</developerConnection>
-    <url>https://github.com/com:adejanovski/cassandra-jdbc-wrapper</url>
-  </scm>
   <build>
     <resources>
       <resource>
@@ -57,7 +52,7 @@
             <dependency>
               <groupId>org.apache.apache.resources</groupId>
               <artifactId>apache-source-release-assembly-descriptor</artifactId>
-              <version>1.0.3</version>
+              <version>1.0.6</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -249,7 +244,7 @@
           </plugin>
           <plugin>
             <artifactId>maven-shade-plugin</artifactId>
-            <version>2.3</version>
+            <version>3.2.0</version>
             <executions>
               <execution>
                 <phase>package</phase>
@@ -386,7 +381,7 @@
     <dependency>
       <groupId>com.datastax.cassandra</groupId>
       <artifactId>cassandra-driver-core</artifactId>
-      <version>3.7.0</version>
+      <version>3.10.2</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -419,23 +414,16 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <distributionManagement>
-    <repository>
-      <id>Snaplogic-ThirdPartyMaven-Repository</id>
-      <name>Snaplogic ThirdParty Repository</name>
-      <url>http://maven.clouddev.snaplogic.com:8080/nexus/content/repositories/thirdparty</url>
-    </repository>
-  </distributionManagement>
   <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <cassandra.version>2.1.9</cassandra.version>
     <cassandra.host>localhost</cassandra.host>
-    <datastax.java.driver.version>3.7.0</datastax.java.driver.version>
+    <datastax.java.driver.version>3.10.2</datastax.java.driver.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <gpg.useagent>true</gpg.useagent>
     <jacoco.version>0.8.5</jacoco.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
     <sourceReleaseAssemblyDescriptor>source-release</sourceReleaseAssemblyDescriptor>
   </properties>
 </project>
-
